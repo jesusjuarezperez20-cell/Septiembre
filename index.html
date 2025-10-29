@@ -691,6 +691,8 @@
     <div class="notification" id="notification"></div>
 
     <main class="container">
+        <!-- Sección de Inicio -->
+        <div id="page-inicio" class="page-section">
         <!-- Tarjeta de Bienvenida -->
         <div class="welcome-card">
             <div class="welcome-header">
@@ -843,6 +845,295 @@
                 </div>
             </div>
         </div>
+        </div>
+        <!-- Fin Sección de Inicio -->
+
+        <!-- Sección de Horario -->
+        <div id="page-horario" class="page-section" style="display: none;">
+            <div class="section-title">
+                <h3>Mi Horario 📅</h3>
+            </div>
+            
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-icon">🕐</div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="classes-today">0</div>
+                        <div class="stat-label">Clases Hoy</div>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-icon">📚</div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="total-classes">0</div>
+                        <div class="stat-label">Clases Semanales</div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top: 1.5rem;">
+                <div id="schedule-container">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">📅</div>
+                            <h3>Lunes</h3>
+                        </div>
+                        <div class="event-item">
+                            <div class="event-time">08:00</div>
+                            <div class="event-text">Cálculo Diferencial - Aula 201</div>
+                        </div>
+                        <div class="event-item">
+                            <div class="event-time">10:00</div>
+                            <div class="event-text">Programación I - Lab 3</div>
+                        </div>
+                        <div class="event-item">
+                            <div class="event-time">14:00</div>
+                            <div class="event-text">Bases de Datos - Aula 305</div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">📅</div>
+                            <h3>Martes</h3>
+                        </div>
+                        <div class="event-item">
+                            <div class="event-time">09:00</div>
+                            <div class="event-text">Ética Profesional - Aula 102</div>
+                        </div>
+                        <div class="event-item">
+                            <div class="event-time">11:00</div>
+                            <div class="event-text">Física - Aula 204</div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">📅</div>
+                            <h3>Miércoles</h3>
+                        </div>
+                        <div class="event-item">
+                            <div class="event-time">08:00</div>
+                            <div class="event-text">Cálculo Diferencial - Aula 201</div>
+                        </div>
+                        <div class="event-item">
+                            <div class="event-time">10:00</div>
+                            <div class="event-text">Programación I - Lab 3</div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">📅</div>
+                            <h3>Jueves</h3>
+                        </div>
+                        <div class="event-item">
+                            <div class="event-time">09:00</div>
+                            <div class="event-text">Ética Profesional - Aula 102</div>
+                        </div>
+                        <div class="event-item">
+                            <div class="event-time">14:00</div>
+                            <div class="event-text">Bases de Datos - Aula 305</div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">📅</div>
+                            <h3>Viernes</h3>
+                        </div>
+                        <div class="event-item">
+                            <div class="event-time">10:00</div>
+                            <div class="event-text">Inglés - Aula 401</div>
+                        </div>
+                        <div class="event-item">
+                            <div class="event-time">12:00</div>
+                            <div class="event-text">Desarrollo Web - Lab 2</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Fin Sección de Horario -->
+
+        <!-- Sección de Progreso -->
+        <div id="page-progreso" class="page-section" style="display: none;">
+            <div class="section-title">
+                <h3>Mi Progreso Académico 📊</h3>
+            </div>
+
+            <div class="card">
+                <h3 style="margin-bottom: 1rem;">Promedio General</h3>
+                <div style="text-align: center;">
+                    <div style="font-size: 3rem; font-weight: 700; background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 0.5rem;">8.7</div>
+                    <p style="color: #777;">Buen rendimiento académico</p>
+                </div>
+            </div>
+
+            <div class="section-title">
+                <h3>Materias 📚</h3>
+            </div>
+
+            <div class="card">
+                <div style="margin-bottom: 1rem;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span style="font-weight: 600;">Cálculo Diferencial</span>
+                        <span style="font-weight: 700; color: var(--primary-color);">9.2</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 92%; background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));"></div>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 1rem;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span style="font-weight: 600;">Programación I</span>
+                        <span style="font-weight: 700; color: var(--primary-color);">9.5</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 95%; background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));"></div>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 1rem;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span style="font-weight: 600;">Bases de Datos</span>
+                        <span style="font-weight: 700; color: var(--primary-color);">8.8</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 88%; background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));"></div>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 1rem;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span style="font-weight: 600;">Ética Profesional</span>
+                        <span style="font-weight: 700; color: var(--primary-color);">8.5</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 85%; background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));"></div>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 1rem;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span style="font-weight: 600;">Física</span>
+                        <span style="font-weight: 700; color: var(--primary-color);">7.9</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 79%; background: linear-gradient(90deg, var(--warning-color), var(--danger-color));"></div>
+                    </div>
+                </div>
+
+                <div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span style="font-weight: 600;">Inglés</span>
+                        <span style="font-weight: 700; color: var(--primary-color);">8.4</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 84%; background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-title">
+                <h3>Estadísticas del Semestre 📈</h3>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-icon">✅</div>
+                    <div class="stat-info">
+                        <div class="stat-value">24/28</div>
+                        <div class="stat-label">Tareas Entregadas</div>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-icon">📝</div>
+                    <div class="stat-info">
+                        <div class="stat-value">92%</div>
+                        <div class="stat-label">Asistencia</div>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-icon">🏆</div>
+                    <div class="stat-info">
+                        <div class="stat-value">5</div>
+                        <div class="stat-label">Materias Aprobadas</div>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-icon">⏰</div>
+                    <div class="stat-info">
+                        <div class="stat-value">120h</div>
+                        <div class="stat-label">Horas de Estudio</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Fin Sección de Progreso -->
+
+        <!-- Sección de Bienestar -->
+        <div id="page-bienestar" class="page-section" style="display: none;">
+            <div class="section-title">
+                <h3>Bienestar Social ❤️</h3>
+            </div>
+
+            <div class="emotion-form">
+                <form id="emotion-form-bienestar">
+                    <div class="form-group">
+                        <label for="person-select-bienestar">Persona:</label>
+                        <select id="person-select-bienestar" class="form-control" required>
+                            <option value="">Selecciona una persona</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Emociones que sentiste:</label>
+                        <div class="emotion-tags" id="emotion-tags-bienestar">
+                            <span class="emotion-tag" data-emotion="Alegría">
+                                <span class="emoji">😊</span> Alegría
+                            </span>
+                            <span class="emotion-tag" data-emotion="Tristeza">
+                                <span class="emoji">😢</span> Tristeza
+                            </span>
+                            <span class="emotion-tag" data-emotion="Enojo">
+                                <span class="emoji">😠</span> Enojo
+                            </span>
+                            <span class="emotion-tag" data-emotion="Amor">
+                                <span class="emoji">❤️</span> Amor
+                            </span>
+                            <span class="emotion-tag" data-emotion="Frustración">
+                                <span class="emoji">😤</span> Frustración
+                            </span>
+                            <span class="emotion-tag" data-emotion="Confianza">
+                                <span class="emoji">🤝</span> Confianza
+                            </span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="emotion-description-bienestar">Describe cómo te sientes:</label>
+                        <textarea id="emotion-description-bienestar" class="form-control" rows="4" placeholder="¿Qué pasó? ¿Cómo te sentiste?" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Registrar Emoción 💝</button>
+                </form>
+            </div>
+
+            <div class="section-title" style="margin-top: 2rem;">
+                <h3>Análisis de Relaciones 🔍</h3>
+            </div>
+
+            <div class="card">
+                <p style="margin-bottom: 1rem; color: #777;">Analiza tus relaciones y obtén recomendaciones personalizadas</p>
+                <button class="btn btn-primary" id="analyze-btn-bienestar">Analizar Mis Relaciones 🧠</button>
+                <div id="analysis-result-bienestar"></div>
+            </div>
+
+            <div class="section-title">
+                <h3>Historial de Emociones 📝</h3>
+            </div>
+            <div id="emotions-history-bienestar"></div>
+        </div>
+        <!-- Fin Sección de Bienestar -->
     </main>
 
     <!-- Navegación Inferior -->
