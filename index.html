@@ -680,8 +680,8 @@
                 <h1>Mi Vida UPMH 🎓</h1>
             </div>
             <div class="user-menu">
-                <i class="fas fa-bell"></i>
-                <i class="fas fa-cog"></i>
+                <i class="fas fa-bell" id="notifications-btn" style="cursor: pointer;"></i>
+                <i class="fas fa-cog" id="settings-btn" style="cursor: pointer;"></i>
             </div>
         </div>
         <div class="date-display" id="current-date">Cargando fecha...</div>
@@ -847,19 +847,19 @@
 
     <!-- Navegación Inferior -->
     <nav class="bottom-nav">
-        <a href="#" class="nav-item active">
+        <a href="#" class="nav-item active" data-page="inicio">
             <i class="fas fa-home nav-icon"></i>
             <span>Inicio</span>
         </a>
-        <a href="#" class="nav-item">
+        <a href="#" class="nav-item" data-page="horario">
             <i class="fas fa-calendar nav-icon"></i>
             <span>Horario</span>
         </a>
-        <a href="#" class="nav-item">
+        <a href="#" class="nav-item" data-page="progreso">
             <i class="fas fa-chart-bar nav-icon"></i>
             <span>Progreso</span>
         </a>
-        <a href="#" class="nav-item">
+        <a href="#" class="nav-item" data-page="bienestar">
             <i class="fas fa-heart nav-icon"></i>
             <span>Bienestar</span>
         </a>
