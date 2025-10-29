@@ -1,8 +1,7 @@
-
 {
-  "name": "Mi Vida UPMH",
-  "short_name": "UPMH",
-  "description": "Organiza tu vida universitaria en UPMH",
+  "name": "Mi Vida Estudiantil - Organiza tu vida universitaria",
+  "short_name": "Mi Vida Estudiantil",
+  "description": "Organiza tu vida universitaria",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#6a11cb",

@@ -1526,6 +1526,7 @@
         // ========== INICIALIZACIÓN ==========
         document.addEventListener('DOMContentLoaded', function() {
             loadTheme();
+            loadInstitutionName();
             initializeApp();
             setupEventListeners();
             renderAllData();
@@ -2341,6 +2342,8 @@
             modal.className = 'modal';
             modal.style.display = 'flex';
             
+            const currentInstitution = localStorage.getItem('institutionName') || 'UPMH';
+            
             const settingsHTML = `
                 <div class="modal-content">
                     <div class="modal-header">
@@ -2348,6 +2351,17 @@
                         <button class="close-modal">&times;</button>
                     </div>
                     <div>
+                        <div style="padding: 1rem; border-bottom: 1px solid #eee;">
+                            <div style="margin-bottom: 0.5rem;">
+                                <div style="font-weight: 600; margin-bottom: 0.5rem;">Nombre de la Institución 🏫</div>
+                                <div style="font-size: 0.8rem; color: #777; margin-bottom: 0.8rem;">Personaliza el nombre de tu escuela o universidad</div>
+                                <input type="text" id="institution-name-input" class="form-control" placeholder="Ej: Mi Universidad" value="${currentInstitution}" maxlength="30">
+                                <button class="btn btn-primary" id="save-institution-btn" style="width: 100%; margin-top: 0.5rem;">
+                                    Guardar 💾
+                                </button>
+                            </div>
+                        </div>
+                        
                         <div style="padding: 1rem; border-bottom: 1px solid #eee;">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
                                 <div>
@@ -2377,8 +2391,8 @@
                         
                         <div style="padding: 1rem;">
                             <div style="text-align: center; color: #777; font-size: 0.9rem;">
-                                <p style="margin: 0.5rem 0;">Mi Vida UPMH v1.0</p>
-                                <p style="margin: 0.5rem 0;">© 2025 UPMH</p>
+                                <p style="margin: 0.5rem 0;">Mi Vida Estudiantil v1.0</p>
+                                <p style="margin: 0.5rem 0;">© 2025</p>
                             </div>
                         </div>
                     </div>
@@ -2417,6 +2431,35 @@
                     }, 1500);
                 }
             });
+            
+            const saveInstitutionBtn = modal.querySelector('#save-institution-btn');
+            const institutionInput = modal.querySelector('#institution-name-input');
+            
+            saveInstitutionBtn.addEventListener('click', () => {
+                const newName = institutionInput.value.trim();
+                if (newName && newName.length > 0) {
+                    localStorage.setItem('institutionName', newName);
+                    updateInstitutionName(newName);
+                    showNotification('Nombre actualizado correctamente ✅', 'success');
+                    document.body.removeChild(modal);
+                } else {
+                    showNotification('Por favor ingresa un nombre válido', 'error');
+                }
+            });
+        }
+        
+        // ========== ACTUALIZAR NOMBRE DE INSTITUCIÓN ==========
+        function updateInstitutionName(name) {
+            document.querySelector('.logo h1').textContent = `Mi Vida ${name} 🎓`;
+            document.querySelector('.mobile-header').style.background = 'var(--gradient)';
+        }
+        
+        // Cargar nombre de institución al iniciar
+        function loadInstitutionName() {
+            const savedName = localStorage.getItem('institutionName');
+            if (savedName) {
+                updateInstitutionName(savedName);
+            }
         }
 
         // ========== FUNCIONES PARA BIENESTAR ==========
