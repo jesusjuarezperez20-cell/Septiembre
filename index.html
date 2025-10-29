@@ -2158,7 +2158,14 @@
         function updateDateTime() {
             const now = new Date();
             const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            document.getElementById('current-date').textContent = now.toLocaleDateString('es-ES', options);
+            const dateString = now.toLocaleDateString('es-ES', options);
+            
+            // Calcular días restantes del año
+            const endOfYear = new Date(now.getFullYear(), 11, 31);
+            const timeDiff = endOfYear.getTime() - now.getTime();
+            const daysRemaining = Math.ceil(timeDiff / (1000 * 3600 * 24));
+            
+            document.getElementById('current-date').textContent = `${dateString} • ${daysRemaining} días para fin de año 🎊`;
         }
 
         function updateWelcomeMessage() {
