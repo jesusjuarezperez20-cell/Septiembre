@@ -6,6 +6,11 @@ export default defineConfig({
   server: {
     host: '0.0.0.0',
     port: 5000,
-    hmr: true, // Change this line to false disable auto-refreshing.
+    strictPort: true,
+    hmr: {
+      host: process.env.REPLIT_DOMAINS?.split(',')[0],
+      clientPort: 443,
+      protocol: 'wss'
+    }
   }
 })
