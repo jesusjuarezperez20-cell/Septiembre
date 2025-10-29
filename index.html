@@ -3,6 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#6a11cb">
+    <meta name="description" content="Organiza tu vida universitaria en UPMH">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Mi Vida UPMH">
+    <link rel="manifest" href="/manifest.json">
     <title>Mi Vida UPMH</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -696,6 +702,160 @@
                 transform: translateX(-50%) translateY(0);
             }
         }
+
+        /* Banner de Instalación PWA */
+        .install-banner {
+            position: fixed;
+            bottom: 80px;
+            left: 0;
+            right: 0;
+            background: white;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.15);
+            padding: 1rem;
+            z-index: 999;
+            display: none;
+            animation: slideUp 0.3s ease;
+        }
+
+        [data-theme="dark"] .install-banner {
+            background: var(--bg-secondary);
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .install-banner-content {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .install-banner-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--gradient);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            flex-shrink: 0;
+        }
+
+        .install-banner-text {
+            flex: 1;
+        }
+
+        .install-banner-text h3 {
+            margin: 0 0 0.25rem 0;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .install-banner-text p {
+            margin: 0;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .install-banner-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .install-btn {
+            background: var(--gradient);
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            font-size: 0.9rem;
+        }
+
+        .dismiss-btn {
+            background: transparent;
+            color: var(--text-secondary);
+            border: none;
+            padding: 0.4rem 0.8rem;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+
+        /* Barra de progreso de instalación */
+        .install-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .install-progress-content {
+            background: var(--bg-secondary);
+            border-radius: var(--radius);
+            padding: 2rem;
+            max-width: 300px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .install-progress-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+        }
+
+        .install-progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(106, 17, 203, 0.2);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+
+        .install-progress-fill {
+            height: 100%;
+            background: var(--gradient);
+            width: 0%;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .install-progress-text {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+        }
     </style>
 </head>
 <body>
@@ -715,6 +875,33 @@
 
     <!-- Notificación -->
     <div class="notification" id="notification"></div>
+
+    <!-- Banner de Instalación PWA -->
+    <div class="install-banner" id="install-banner">
+        <div class="install-banner-content">
+            <div class="install-banner-icon">🎓</div>
+            <div class="install-banner-text">
+                <h3>Instalar Mi Vida UPMH</h3>
+                <p>Accede más rápido y úsala sin conexión</p>
+            </div>
+            <div class="install-banner-actions">
+                <button class="install-btn" id="install-btn">Instalar</button>
+                <button class="dismiss-btn" id="dismiss-install">Ahora no</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Barra de progreso de instalación -->
+    <div class="install-progress" id="install-progress">
+        <div class="install-progress-content">
+            <div class="install-progress-icon">📲</div>
+            <h3>Instalando Mi Vida UPMH</h3>
+            <div class="install-progress-bar">
+                <div class="install-progress-fill" id="install-progress-fill"></div>
+            </div>
+            <p class="install-progress-text" id="install-progress-text">Preparando la aplicación...</p>
+        </div>
+    </div>
 
     <main class="container">
         <!-- Sección de Inicio -->
@@ -2397,6 +2584,127 @@
                 }
             });
         });
+
+        // ========== PWA INSTALACIÓN ==========
+        let deferredPrompt;
+        const installBanner = document.getElementById('install-banner');
+        const installBtn = document.getElementById('install-btn');
+        const dismissBtn = document.getElementById('dismiss-install');
+        const installProgress = document.getElementById('install-progress');
+        const progressFill = document.getElementById('install-progress-fill');
+        const progressText = document.getElementById('install-progress-text');
+
+        // Registrar Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then((registration) => {
+                        console.log('Service Worker registrado:', registration);
+                    })
+                    .catch((error) => {
+                        console.log('Error al registrar Service Worker:', error);
+                    });
+            });
+        }
+
+        // Capturar evento beforeinstallprompt
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+
+            // Verificar si ya fue instalada o rechazada
+            const installDismissed = localStorage.getItem('installDismissed');
+            const isInstalled = localStorage.getItem('pwaInstalled');
+
+            if (!installDismissed && !isInstalled) {
+                // Mostrar banner después de 2 segundos
+                setTimeout(() => {
+                    installBanner.style.display = 'block';
+                }, 2000);
+            }
+        });
+
+        // Botón de instalar
+        installBtn.addEventListener('click', async () => {
+            if (!deferredPrompt) {
+                showNotification('La instalación no está disponible', 'error');
+                return;
+            }
+
+            installBanner.style.display = 'none';
+            installProgress.style.display = 'flex';
+
+            // Simular progreso de instalación
+            let progress = 0;
+            const progressInterval = setInterval(() => {
+                progress += 10;
+                progressFill.style.width = progress + '%';
+
+                if (progress === 30) {
+                    progressText.textContent = 'Descargando recursos...';
+                } else if (progress === 60) {
+                    progressText.textContent = 'Configurando la app...';
+                } else if (progress === 90) {
+                    progressText.textContent = 'Casi listo...';
+                }
+
+                if (progress >= 100) {
+                    clearInterval(progressInterval);
+                }
+            }, 200);
+
+            // Mostrar prompt de instalación
+            deferredPrompt.prompt();
+
+            const { outcome } = await deferredPrompt.userChoice;
+
+            if (outcome === 'accepted') {
+                console.log('Usuario aceptó la instalación');
+                localStorage.setItem('pwaInstalled', 'true');
+
+                // Completar barra de progreso
+                setTimeout(() => {
+                    progressFill.style.width = '100%';
+                    progressText.textContent = '¡Instalación completada! ✅';
+
+                    setTimeout(() => {
+                        installProgress.style.display = 'none';
+                        showNotification('¡App instalada correctamente! 🎉');
+                    }, 1500);
+                }, 500);
+            } else {
+                console.log('Usuario rechazó la instalación');
+                clearInterval(progressInterval);
+                installProgress.style.display = 'none';
+                showNotification('Instalación cancelada', 'error');
+            }
+
+            deferredPrompt = null;
+        });
+
+        // Botón de descartar
+        dismissBtn.addEventListener('click', () => {
+            installBanner.style.display = 'none';
+            localStorage.setItem('installDismissed', 'true');
+
+            // Permitir mostrar banner nuevamente después de 7 días
+            setTimeout(() => {
+                localStorage.removeItem('installDismissed');
+            }, 7 * 24 * 60 * 60 * 1000);
+        });
+
+        // Detectar cuando la app se instala
+        window.addEventListener('appinstalled', () => {
+            console.log('PWA instalada correctamente');
+            localStorage.setItem('pwaInstalled', 'true');
+            installBanner.style.display = 'none';
+        });
+
+        // Verificar si ya está instalada (modo standalone)
+        if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
+            console.log('App corriendo en modo instalado');
+            localStorage.setItem('pwaInstalled', 'true');
+        }
     </script>
 </body>
 </html>
