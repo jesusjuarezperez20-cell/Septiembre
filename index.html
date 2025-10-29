@@ -1341,10 +1341,14 @@
             document.querySelectorAll('.nav-item').forEach(item => {
                 item.addEventListener('click', function(e) {
                     e.preventDefault();
-                    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-                    this.classList.add('active');
+                    const page = this.getAttribute('data-page');
+                    navigateToPage(page);
                 });
             });
+
+            // Botones del header
+            document.getElementById('notifications-btn').addEventListener('click', showNotificationsModal);
+            document.getElementById('settings-btn').addEventListener('click', showSettingsModal);
 
             // Ver todos
             document.getElementById('see-all-tasks').addEventListener('click', function(e) {
@@ -1987,13 +1991,357 @@
             }, 3000);
         }
 
+        // ========== NAVEGACIÓN ENTRE PÁGINAS ==========
+        function navigateToPage(pageName) {
+            document.querySelectorAll('.page-section').forEach(section => {
+                section.style.display = 'none';
+            });
+
+            const pageElement = document.getElementById('page-' + pageName);
+            if (pageElement) {
+                pageElement.style.display = 'block';
+            }
+
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+
+            document.querySelector(`.nav-item[data-page="${pageName}"]`)?.classList.add('active');
+
+            if (pageName === 'bienestar') {
+                populatePersonSelectsBienestar();
+                renderEmotionsHistoryBienestar();
+            }
+
+            if (pageName === 'horario') {
+                updateScheduleStats();
+            }
+        }
+
+        function updateScheduleStats() {
+            const totalClasses = 11;
+            document.getElementById('total-classes').textContent = totalClasses;
+            
+            const today = new Date().getDay();
+            let classesToday = 0;
+            
+            switch(today) {
+                case 1: classesToday = 3; break;
+                case 2: classesToday = 2; break;
+                case 3: classesToday = 2; break;
+                case 4: classesToday = 2; break;
+                case 5: classesToday = 2; break;
+                default: classesToday = 0;
+            }
+            
+            document.getElementById('classes-today').textContent = classesToday;
+        }
+
+        // ========== MODAL DE NOTIFICACIONES ==========
+        function showNotificationsModal() {
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.style.display = 'flex';
+            
+            const notificationsHTML = `
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>Notificaciones 🔔</h3>
+                        <button class="close-modal">&times;</button>
+                    </div>
+                    <div style="max-height: 400px; overflow-y: auto;">
+                        ${appData.tasks.filter(t => !t.completed && t.deadline).slice(0, 3).map(task => `
+                            <div style="padding: 1rem; border-bottom: 1px solid #eee;">
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <div style="background: var(--gradient); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.2rem;">
+                                        📝
+                                    </div>
+                                    <div style="flex: 1;">
+                                        <div style="font-weight: 600;">${task.title}</div>
+                                        <div style="font-size: 0.8rem; color: #777;">Vence: ${formatDate(task.deadline)}</div>
+                                    </div>
+                                    <div class="task-priority priority-${task.priority}">
+                                        ${task.priority === 'high' ? '🔴' : task.priority === 'medium' ? '🟡' : '🟢'}
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                        ${appData.events.slice(0, 2).map(event => `
+                            <div style="padding: 1rem; border-bottom: 1px solid #eee;">
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <div style="background: var(--gradient); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.2rem;">
+                                        📅
+                                    </div>
+                                    <div style="flex: 1;">
+                                        <div style="font-weight: 600;">${event.title}</div>
+                                        <div style="font-size: 0.8rem; color: #777;">${formatDate(event.date)} - ${event.time}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                        ${(appData.tasks.filter(t => !t.completed && t.deadline).length === 0 && appData.events.length === 0) ? `
+                            <div class="empty-state">
+                                <div class="empty-icon">🔕</div>
+                                <p>No tienes notificaciones</p>
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+            
+            modal.innerHTML = notificationsHTML;
+            document.body.appendChild(modal);
+            
+            modal.querySelector('.close-modal').addEventListener('click', () => {
+                document.body.removeChild(modal);
+            });
+            
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    document.body.removeChild(modal);
+                }
+            });
+        }
+
+        // ========== MODAL DE AJUSTES ==========
+        function showSettingsModal() {
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.style.display = 'flex';
+            
+            const settingsHTML = `
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>Ajustes ⚙️</h3>
+                        <button class="close-modal">&times;</button>
+                    </div>
+                    <div>
+                        <div style="padding: 1rem; border-bottom: 1px solid #eee;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                <div>
+                                    <div style="font-weight: 600;">Notificaciones</div>
+                                    <div style="font-size: 0.8rem; color: #777;">Recibe alertas de tareas y eventos</div>
+                                </div>
+                                <input type="checkbox" checked style="width: 20px; height: 20px; accent-color: var(--primary-color);">
+                            </div>
+                        </div>
+                        
+                        <div style="padding: 1rem; border-bottom: 1px solid #eee;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                <div>
+                                    <div style="font-weight: 600;">Modo Oscuro</div>
+                                    <div style="font-size: 0.8rem; color: #777;">Cambia el tema de la aplicación</div>
+                                </div>
+                                <input type="checkbox" id="dark-mode-toggle" style="width: 20px; height: 20px; accent-color: var(--primary-color);">
+                            </div>
+                        </div>
+                        
+                        <div style="padding: 1rem; border-bottom: 1px solid #eee;">
+                            <div style="font-weight: 600; margin-bottom: 0.5rem;">Datos de la Aplicación</div>
+                            <button class="btn btn-danger" id="clear-data-btn" style="width: 100%; margin-top: 0.5rem;">
+                                Borrar todos los datos 🗑️
+                            </button>
+                        </div>
+                        
+                        <div style="padding: 1rem;">
+                            <div style="text-align: center; color: #777; font-size: 0.9rem;">
+                                <p style="margin: 0.5rem 0;">Mi Vida UPMH v1.0</p>
+                                <p style="margin: 0.5rem 0;">© 2025 UPMH</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            modal.innerHTML = settingsHTML;
+            document.body.appendChild(modal);
+            
+            modal.querySelector('.close-modal').addEventListener('click', () => {
+                document.body.removeChild(modal);
+            });
+            
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    document.body.removeChild(modal);
+                }
+            });
+            
+            const darkModeToggle = modal.querySelector('#dark-mode-toggle');
+            darkModeToggle.addEventListener('change', function() {
+                if (this.checked) {
+                    showNotification('El modo oscuro estará disponible pronto 🌙', 'success');
+                    this.checked = false;
+                }
+            });
+            
+            const clearDataBtn = modal.querySelector('#clear-data-btn');
+            clearDataBtn.addEventListener('click', () => {
+                if (confirm('¿Estás seguro de que quieres borrar todos los datos? Esta acción no se puede deshacer.')) {
+                    localStorage.removeItem('upmhAppData');
+                    showNotification('Datos eliminados. Recargando... 🔄', 'success');
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1500);
+                }
+            });
+        }
+
+        // ========== FUNCIONES PARA BIENESTAR ==========
+        function populatePersonSelectsBienestar() {
+            const select = document.getElementById('person-select-bienestar');
+            if (!select) return;
+            
+            select.innerHTML = '<option value="">Selecciona una persona</option>';
+            appData.people.forEach(person => {
+                const option = document.createElement('option');
+                option.value = person.name;
+                option.textContent = `${person.emoji} ${person.name}`;
+                select.appendChild(option);
+            });
+        }
+
+        function renderEmotionsHistoryBienestar() {
+            const container = document.getElementById('emotions-history-bienestar');
+            if (!container) return;
+            
+            if (appData.emotions.length === 0) {
+                container.innerHTML = `
+                    <div class="card">
+                        <div class="empty-state">
+                            <div class="empty-icon">💭</div>
+                            <p>No has registrado emociones aún</p>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = appData.emotions.map(emotion => `
+                <div class="card" style="margin-bottom: 1rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                        <strong>${emotion.person}</strong>
+                        <span style="font-size: 0.8rem; color: #777;">${formatDate(emotion.date)}</span>
+                    </div>
+                    <div style="margin: 0.5rem 0;">
+                        ${emotion.emotions.map(e => `<span class="emotion-tag active" style="margin-right: 0.5rem;">${e}</span>`).join('')}
+                    </div>
+                    <p style="color: #777; font-size: 0.9rem; margin-top: 0.5rem;">${emotion.description}</p>
+                </div>
+            `).join('');
+        }
+
         // ========== EVENT LISTENERS ADICIONALES ==========
-        // Emoción tags
-        document.querySelectorAll('.emotion-tag').forEach(tag => {
+        // Emoción tags (página inicio)
+        document.querySelectorAll('#page-inicio .emotion-tag').forEach(tag => {
             tag.addEventListener('click', function() {
                 this.classList.toggle('active');
             });
         });
+
+        // Emoción tags (página bienestar)
+        document.querySelectorAll('#page-bienestar .emotion-tag').forEach(tag => {
+            tag.addEventListener('click', function() {
+                this.classList.toggle('active');
+            });
+        });
+
+        // Formulario de emociones en página bienestar
+        const emotionFormBienestar = document.getElementById('emotion-form-bienestar');
+        if (emotionFormBienestar) {
+            emotionFormBienestar.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                const selectedEmotions = Array.from(document.querySelectorAll('#page-bienestar .emotion-tag.active'))
+                    .map(tag => tag.getAttribute('data-emotion'));
+
+                if (selectedEmotions.length === 0) {
+                    showNotification('Por favor selecciona al menos una emoción', 'error');
+                    return;
+                }
+
+                const personSelect = document.getElementById('person-select-bienestar');
+                if (!personSelect.value) {
+                    showNotification('Por favor selecciona una persona', 'error');
+                    return;
+                }
+
+                const newEmotion = {
+                    id: Date.now(),
+                    person: personSelect.value,
+                    date: new Date().toISOString().split('T')[0],
+                    emotions: selectedEmotions,
+                    description: document.getElementById('emotion-description-bienestar').value
+                };
+
+                appData.emotions.push(newEmotion);
+                saveData();
+                renderEmotionsHistoryBienestar();
+                updateStats();
+                showNotification('¡Emoción registrada correctamente! ❤️');
+                e.target.reset();
+
+                document.querySelectorAll('#page-bienestar .emotion-tag.active').forEach(tag => {
+                    tag.classList.remove('active');
+                });
+            });
+        }
+
+        // Botón analizar en página bienestar
+        const analyzeBtnBienestar = document.getElementById('analyze-btn-bienestar');
+        if (analyzeBtnBienestar) {
+            analyzeBtnBienestar.addEventListener('click', function() {
+                const resultContainer = document.getElementById('analysis-result-bienestar');
+                if (!resultContainer) return;
+
+                if (appData.emotions.length === 0) {
+                    showNotification('Primero registra algunas emociones', 'error');
+                    return;
+                }
+
+                const emotionCounts = {};
+                const personEmotions = {};
+
+                appData.emotions.forEach(emotion => {
+                    if (!personEmotions[emotion.person]) {
+                        personEmotions[emotion.person] = [];
+                    }
+                    personEmotions[emotion.person].push(...emotion.emotions);
+
+                    emotion.emotions.forEach(e => {
+                        emotionCounts[e] = (emotionCounts[e] || 0) + 1;
+                    });
+                });
+
+                const dominantEmotion = Object.keys(emotionCounts).reduce((a, b) => 
+                    emotionCounts[a] > emotionCounts[b] ? a : b
+                );
+
+                const recommendations = {
+                    'Alegría': 'Mantén el contacto frecuente con estas personas. Las relaciones positivas son clave para tu bienestar.',
+                    'Tristeza': 'Considera hablar sobre tus sentimientos con alguien de confianza o un profesional.',
+                    'Enojo': 'Toma tiempo para reflexionar sobre lo que te molesta. La comunicación asertiva puede ayudar.',
+                    'Amor': 'Cultiva estas relaciones especiales. El amor es fundamental para nuestra salud emocional.',
+                    'Frustración': 'Identifica las causas y busca soluciones prácticas. A veces, un cambio de perspectiva ayuda.',
+                    'Confianza': 'Las relaciones basadas en confianza son valiosas. Continúa siendo honesto y leal.'
+                };
+
+                const analysisHTML = `
+                    <div class="analysis-result">
+                        <h4>Análisis de tus Relaciones 📊</h4>
+                        <p><strong>Emoción predominante:</strong> ${dominantEmotion}</p>
+                        <p><strong>Total de registros:</strong> ${appData.emotions.length}</p>
+                        <p><strong>Personas registradas:</strong> ${Object.keys(personEmotions).length}</p>
+                    </div>
+                    <div class="recommendation">
+                        <h4>Recomendación 💡</h4>
+                        <p>${recommendations[dominantEmotion] || 'Continúa registrando tus emociones para obtener mejores insights.'}</p>
+                    </div>
+                `;
+
+                resultContainer.innerHTML = analysisHTML;
+                showNotification('Análisis completado ✨');
+            });
+        }
 
         // Cerrar modal al hacer clic fuera
         document.querySelectorAll('.modal').forEach(modal => {
