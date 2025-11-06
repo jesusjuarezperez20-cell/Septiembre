@@ -1775,13 +1775,20 @@
                 e.preventDefault();
                 e.stopPropagation();
                 
-                const id = parseInt(deleteBtn.getAttribute('data-id'));
+                const idAttr = deleteBtn.getAttribute('data-id');
                 const type = deleteBtn.getAttribute('data-type');
                 
-                console.log('Eliminar clickeado - Tipo:', type, 'ID:', id);
+                console.log('Botón eliminar clickeado - Tipo:', type, 'ID attr:', idAttr);
                 
-                if (!id || !type) {
-                    console.log('ID o tipo inválido');
+                if (!idAttr || !type) {
+                    console.log('ID o tipo inválido - ID:', idAttr, 'Tipo:', type);
+                    return;
+                }
+                
+                const id = parseInt(idAttr);
+                
+                if (isNaN(id)) {
+                    console.log('ID no es un número válido:', idAttr);
                     return;
                 }
                 
@@ -1789,9 +1796,11 @@
                 let name = '';
                 
                 if (type === 'class') {
+                    console.log('Buscando clase con ID:', id, 'en', appData.schedule.length, 'clases');
                     item = appData.schedule.find(c => c.id === id);
                     name = item ? item.name : '';
                 } else if (type === 'subject') {
+                    console.log('Buscando materia con ID:', id, 'en', appData.subjects.length, 'materias');
                     item = appData.subjects.find(s => s.id === id);
                     name = item ? item.name : '';
                 } else if (type === 'task') {
@@ -1813,7 +1822,8 @@
                 if (item) {
                     openDeleteModal(type, id, name);
                 } else {
-                    console.log('No se encontró el elemento');
+                    console.log('No se encontró el elemento con ID:', id, 'tipo:', type);
+                    showNotification('Error: No se encontró el elemento a eliminar', 'error');
                 }
             });
         }
