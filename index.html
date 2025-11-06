@@ -1757,40 +1757,36 @@
 
         // Event delegation global para todos los botones de eliminar
         function setupGlobalDeleteListeners() {
-            document.body.addEventListener('click', function(e) {
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.delete-btn')) return;
+                
                 const deleteBtn = e.target.closest('.delete-btn');
-                if (!deleteBtn) return;
-
                 const id = parseInt(deleteBtn.getAttribute('data-id'));
                 const type = deleteBtn.getAttribute('data-type');
                 
-                let item, name;
+                if (!id || !type) return;
                 
-                switch(type) {
-                    case 'class':
-                        item = appData.schedule.find(c => c.id === id);
-                        name = item ? item.name : '';
-                        break;
-                    case 'subject':
-                        item = appData.subjects.find(s => s.id === id);
-                        name = item ? item.name : '';
-                        break;
-                    case 'task':
-                        item = appData.tasks.find(t => t.id === id);
-                        name = item ? item.title : '';
-                        break;
-                    case 'event':
-                        item = appData.events.find(ev => ev.id === id);
-                        name = item ? item.title : '';
-                        break;
-                    case 'person':
-                        item = appData.people.find(p => p.id === id);
-                        name = item ? item.name : '';
-                        break;
-                    case 'emotion':
-                        item = appData.emotions.find(em => em.id === id);
-                        name = item ? `Emoción sobre ${item.person}` : '';
-                        break;
+                let item = null;
+                let name = '';
+                
+                if (type === 'class') {
+                    item = appData.schedule.find(c => c.id === id);
+                    name = item ? item.name : '';
+                } else if (type === 'subject') {
+                    item = appData.subjects.find(s => s.id === id);
+                    name = item ? item.name : '';
+                } else if (type === 'task') {
+                    item = appData.tasks.find(t => t.id === id);
+                    name = item ? item.title : '';
+                } else if (type === 'event') {
+                    item = appData.events.find(ev => ev.id === id);
+                    name = item ? item.title : '';
+                } else if (type === 'person') {
+                    item = appData.people.find(p => p.id === id);
+                    name = item ? item.name : '';
+                } else if (type === 'emotion') {
+                    item = appData.emotions.find(em => em.id === id);
+                    name = item ? `Emoción sobre ${item.person}` : '';
                 }
                 
                 if (item && name) {
@@ -2175,31 +2171,33 @@
         }
 
         function confirmDelete() {
-            if (!itemToDelete || !deleteType) return;
+            if (!itemToDelete || !deleteType) {
+                console.log('No hay elemento para eliminar');
+                return;
+            }
 
-            switch(deleteType) {
-                case 'task':
-                    appData.tasks = appData.tasks.filter(task => task.id !== itemToDelete);
-                    break;
-                case 'event':
-                    appData.events = appData.events.filter(event => event.id !== itemToDelete);
-                    break;
-                case 'person':
-                    const personToDelete = appData.people.find(p => p.id === itemToDelete);
-                    if (personToDelete) {
-                        appData.people = appData.people.filter(person => person.id !== itemToDelete);
-                        appData.emotions = appData.emotions.filter(emotion => emotion.person !== personToDelete.name);
-                    }
-                    break;
-                case 'emotion':
-                    appData.emotions = appData.emotions.filter(emotion => emotion.id !== itemToDelete);
-                    break;
-                case 'class':
-                    appData.schedule = appData.schedule.filter(cls => cls.id !== itemToDelete);
-                    break;
-                case 'subject':
-                    appData.subjects = appData.subjects.filter(subj => subj.id !== itemToDelete);
-                    break;
+            console.log('Eliminando:', deleteType, itemToDelete);
+
+            if (deleteType === 'task') {
+                appData.tasks = appData.tasks.filter(task => task.id !== itemToDelete);
+            } else if (deleteType === 'event') {
+                appData.events = appData.events.filter(event => event.id !== itemToDelete);
+            } else if (deleteType === 'person') {
+                const personToDelete = appData.people.find(p => p.id === itemToDelete);
+                if (personToDelete) {
+                    appData.people = appData.people.filter(person => person.id !== itemToDelete);
+                    appData.emotions = appData.emotions.filter(emotion => emotion.person !== personToDelete.name);
+                }
+            } else if (deleteType === 'emotion') {
+                appData.emotions = appData.emotions.filter(emotion => emotion.id !== itemToDelete);
+            } else if (deleteType === 'class') {
+                console.log('Clases antes:', appData.schedule.length);
+                appData.schedule = appData.schedule.filter(cls => cls.id !== itemToDelete);
+                console.log('Clases después:', appData.schedule.length);
+            } else if (deleteType === 'subject') {
+                console.log('Materias antes:', appData.subjects.length);
+                appData.subjects = appData.subjects.filter(subj => subj.id !== itemToDelete);
+                console.log('Materias después:', appData.subjects.length);
             }
 
             saveData();
