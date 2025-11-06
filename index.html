@@ -1326,7 +1326,10 @@
         <div id="page-horario" class="page-section" style="display: none;">
             <div class="section-title">
                 <h3>Mi Horario 📅</h3>
-                <button class="see-all" id="add-class-btn" style="padding: 10px 18px;">+ Agregar Clase</button>
+                <div style="display: flex; gap: 8px;">
+                    <button class="see-all" id="manage-classes-btn" style="padding: 10px 18px; background: rgba(255, 107, 107, 0.15); color: var(--danger-color);">🗑️ Gestionar</button>
+                    <button class="see-all" id="add-class-btn" style="padding: 10px 18px;">+ Agregar</button>
+                </div>
             </div>
             
             <div class="stats-grid">
@@ -1370,7 +1373,10 @@
         <div id="page-progreso" class="page-section" style="display: none;">
             <div class="section-title">
                 <h3>Mi Progreso Académico 📊</h3>
-                <button class="see-all" id="add-subject-btn" style="padding: 10px 18px;">+ Agregar Materia</button>
+                <div style="display: flex; gap: 8px;">
+                    <button class="see-all" id="manage-subjects-btn" style="padding: 10px 18px; background: rgba(255, 107, 107, 0.15); color: var(--danger-color);">🗑️ Gestionar</button>
+                    <button class="see-all" id="add-subject-btn" style="padding: 10px 18px;">+ Agregar</button>
+                </div>
             </div>
 
             <div class="card" style="background: var(--gradient); color: white; text-align: center; padding: 2rem;">
@@ -1895,13 +1901,19 @@
                 showAllItems('people');
             });
 
-            // Botones de agregar clase y materia (se agregan con delegación de eventos)
+            // Botones de agregar y gestionar clase y materia (se agregan con delegación de eventos)
             document.addEventListener('click', function(e) {
                 if (e.target && e.target.id === 'add-class-btn') {
                     openClassModal();
                 }
                 if (e.target && e.target.id === 'add-subject-btn') {
                     openSubjectModal();
+                }
+                if (e.target && e.target.id === 'manage-classes-btn') {
+                    showManageClassesModal();
+                }
+                if (e.target && e.target.id === 'manage-subjects-btn') {
+                    showManageSubjectsModal();
                 }
             });
         }
@@ -3019,6 +3031,183 @@
             });
         }
         
+        // ========== MODAL DE GESTIÓN DE CLASES ==========
+        function showManageClassesModal() {
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.style.display = 'flex';
+            
+            const classesHTML = `
+                <div class="modal-content" style="max-width: 600px;">
+                    <div class="modal-header">
+                        <h3>Gestionar Clases 🗑️</h3>
+                        <button class="close-modal">&times;</button>
+                    </div>
+                    <div style="max-height: 500px; overflow-y: auto;">
+                        ${appData.schedule.length === 0 ? `
+                            <div class="empty-state">
+                                <div class="empty-icon">📅</div>
+                                <p>No tienes clases registradas</p>
+                            </div>
+                        ` : appData.schedule.map(cls => `
+                            <div style="padding: 1rem; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+                                <div style="flex: 1;">
+                                    <div style="font-weight: 600; font-size: 1rem; color: var(--text-primary);">${cls.name}</div>
+                                    <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.3rem;">
+                                        📅 ${cls.day} • 🕐 ${cls.time} • 📍 ${cls.location}
+                                    </div>
+                                </div>
+                                <button class="btn btn-danger manage-delete-class-btn" data-id="${cls.id}" data-name="${cls.name}" style="padding: 10px 16px; font-size: 0.9rem;">
+                                    🗑️ Borrar
+                                </button>
+                            </div>
+                        `).join('')}
+                    </div>
+                    ${appData.schedule.length > 0 ? `
+                        <div style="padding: 1rem; border-top: 2px solid var(--border-color); background: var(--bg-secondary);">
+                            <button class="btn btn-danger" id="delete-all-classes-btn" style="width: 100%;">
+                                🗑️ Borrar Todas las Clases
+                            </button>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+            
+            modal.innerHTML = classesHTML;
+            document.body.appendChild(modal);
+            
+            modal.querySelector('.close-modal').addEventListener('click', () => {
+                document.body.removeChild(modal);
+            });
+            
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    document.body.removeChild(modal);
+                }
+            });
+            
+            // Event listeners para botones de borrar individual
+            modal.querySelectorAll('.manage-delete-class-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const id = parseInt(this.getAttribute('data-id'));
+                    const name = this.getAttribute('data-name');
+                    
+                    if (confirm(`¿Estás seguro de que quieres borrar la clase "${name}"?`)) {
+                        appData.schedule = appData.schedule.filter(cls => cls.id !== id);
+                        saveData();
+                        renderSchedule();
+                        updateScheduleStats();
+                        document.body.removeChild(modal);
+                        showNotification('Clase eliminada correctamente 🗑️', 'success');
+                    }
+                });
+            });
+            
+            // Event listener para borrar todas
+            const deleteAllBtn = modal.querySelector('#delete-all-classes-btn');
+            if (deleteAllBtn) {
+                deleteAllBtn.addEventListener('click', function() {
+                    if (confirm(`¿Estás seguro de que quieres borrar TODAS las ${appData.schedule.length} clases? Esta acción no se puede deshacer.`)) {
+                        appData.schedule = [];
+                        saveData();
+                        renderSchedule();
+                        updateScheduleStats();
+                        document.body.removeChild(modal);
+                        showNotification('Todas las clases han sido eliminadas 🗑️', 'success');
+                    }
+                });
+            }
+        }
+
+        // ========== MODAL DE GESTIÓN DE MATERIAS ==========
+        function showManageSubjectsModal() {
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.style.display = 'flex';
+            
+            const subjectsHTML = `
+                <div class="modal-content" style="max-width: 600px;">
+                    <div class="modal-header">
+                        <h3>Gestionar Materias 🗑️</h3>
+                        <button class="close-modal">&times;</button>
+                    </div>
+                    <div style="max-height: 500px; overflow-y: auto;">
+                        ${appData.subjects.length === 0 ? `
+                            <div class="empty-state">
+                                <div class="empty-icon">📚</div>
+                                <p>No tienes materias registradas</p>
+                            </div>
+                        ` : appData.subjects.map(subject => `
+                            <div style="padding: 1rem; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+                                <div style="flex: 1;">
+                                    <div style="font-weight: 600; font-size: 1rem; color: var(--text-primary);">${subject.name}</div>
+                                    <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.3rem;">
+                                        Calificación: <strong style="color: var(--primary-color);">${subject.grade.toFixed(1)}</strong> • 
+                                        Créditos: <strong>${subject.credits}</strong>
+                                    </div>
+                                </div>
+                                <button class="btn btn-danger manage-delete-subject-btn" data-id="${subject.id}" data-name="${subject.name}" style="padding: 10px 16px; font-size: 0.9rem;">
+                                    🗑️ Borrar
+                                </button>
+                            </div>
+                        `).join('')}
+                    </div>
+                    ${appData.subjects.length > 0 ? `
+                        <div style="padding: 1rem; border-top: 2px solid var(--border-color); background: var(--bg-secondary);">
+                            <button class="btn btn-danger" id="delete-all-subjects-btn" style="width: 100%;">
+                                🗑️ Borrar Todas las Materias
+                            </button>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+            
+            modal.innerHTML = subjectsHTML;
+            document.body.appendChild(modal);
+            
+            modal.querySelector('.close-modal').addEventListener('click', () => {
+                document.body.removeChild(modal);
+            });
+            
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    document.body.removeChild(modal);
+                }
+            });
+            
+            // Event listeners para botones de borrar individual
+            modal.querySelectorAll('.manage-delete-subject-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const id = parseInt(this.getAttribute('data-id'));
+                    const name = this.getAttribute('data-name');
+                    
+                    if (confirm(`¿Estás seguro de que quieres borrar la materia "${name}"?`)) {
+                        appData.subjects = appData.subjects.filter(subject => subject.id !== id);
+                        saveData();
+                        renderSubjects();
+                        updateProgressStats();
+                        document.body.removeChild(modal);
+                        showNotification('Materia eliminada correctamente 🗑️', 'success');
+                    }
+                });
+            });
+            
+            // Event listener para borrar todas
+            const deleteAllBtn = modal.querySelector('#delete-all-subjects-btn');
+            if (deleteAllBtn) {
+                deleteAllBtn.addEventListener('click', function() {
+                    if (confirm(`¿Estás seguro de que quieres borrar TODAS las ${appData.subjects.length} materias? Esta acción no se puede deshacer.`)) {
+                        appData.subjects = [];
+                        saveData();
+                        renderSubjects();
+                        updateProgressStats();
+                        document.body.removeChild(modal);
+                        showNotification('Todas las materias han sido eliminadas 🗑️', 'success');
+                    }
+                });
+            }
+        }
+
         // ========== ACTUALIZAR NOMBRE DE INSTITUCIÓN ==========
         function updateInstitutionName(name) {
             document.querySelector('.logo h1').textContent = `Mi Vida ${name} 🎓`;
