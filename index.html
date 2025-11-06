@@ -93,14 +93,14 @@
         .mobile-header {
             background: var(--gradient);
             color: white;
-            padding: 1.2rem 1rem;
+            padding: 1.5rem 1.2rem;
             position: sticky;
             top: 0;
             z-index: 100;
-            box-shadow: 0 4px 30px rgba(106, 17, 203, 0.2);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            animation: slideDown 0.6s ease;
+            box-shadow: 0 4px 30px rgba(106, 17, 203, 0.3);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+            animation: slideDown 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         @keyframes slideDown {
@@ -114,22 +114,64 @@
             }
         }
 
-        .header-top {
+        .header-content {
+            max-width: 100%;
+        }
+
+        .header-main {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 1rem;
         }
 
-        .logo {
+        .logo-section {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
         }
 
-        .logo h1 {
-            font-size: 1.2rem;
+        .app-icon {
+            font-size: 2rem;
+            background: rgba(255, 255, 255, 0.2);
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-5px);
+            }
+        }
+
+        .app-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .app-title {
+            font-size: 1.3rem;
             font-weight: 700;
+            margin: 0;
+            letter-spacing: -0.5px;
+        }
+
+        .app-subtitle {
+            font-size: 0.75rem;
+            margin: 0;
+            opacity: 0.85;
+            font-weight: 400;
         }
 
         .user-menu {
@@ -243,13 +285,12 @@
         }
 
         /* Sección de Bienvenida */
-        .welcome-card {
-            background: var(--gradient);
-            color: white;
-            border-radius: var(--radius);
-            padding: 2rem;
-            margin: 1rem 0;
-            box-shadow: 0 12px 40px rgba(106, 17, 203, 0.25);
+        .welcome-card-new {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            border-radius: 24px;
+            padding: 0;
+            margin: 1.5rem 0;
+            box-shadow: 0 20px 60px rgba(102, 126, 234, 0.4);
             position: relative;
             overflow: hidden;
             animation: fadeInUp 0.6s ease 0.2s both;
@@ -266,73 +307,144 @@
             }
         }
 
-        .welcome-card::before {
-            content: "";
+        .welcome-bg-pattern {
             position: absolute;
-            top: -50%;
-            right: -30%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
-            animation: float 8s ease-in-out infinite;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.08) 0%, transparent 60%);
+            animation: patternMove 20s ease-in-out infinite;
         }
 
-        @keyframes float {
+        @keyframes patternMove {
             0%, 100% {
-                transform: translate(0, 0) rotate(0deg);
+                transform: translate(0, 0) scale(1);
             }
             50% {
-                transform: translate(-20px, -20px) rotate(5deg);
+                transform: translate(10px, -10px) scale(1.05);
             }
         }
 
-        .welcome-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
+        .welcome-content {
             position: relative;
             z-index: 2;
+            padding: 2rem 1.5rem;
         }
 
-        .user-avatar {
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.2);
+        .welcome-greeting {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .greeting-emoji {
+            font-size: 3.5rem;
+            margin-bottom: 0.5rem;
+            animation: wave 2s ease-in-out infinite;
+            display: inline-block;
+        }
+
+        @keyframes wave {
+            0%, 100% {
+                transform: rotate(0deg);
+            }
+            25% {
+                transform: rotate(20deg);
+            }
+            75% {
+                transform: rotate(-20deg);
+            }
+        }
+
+        .greeting-title {
+            font-size: 2rem;
+            font-weight: 800;
+            margin: 0 0 0.5rem 0;
+            color: white;
+            text-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
+            letter-spacing: -0.5px;
+        }
+
+        .greeting-subtitle {
+            font-size: 1rem;
+            margin: 0;
+            color: rgba(255, 255, 255, 0.95);
+            font-weight: 500;
+        }
+
+        .quick-stats {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            border-radius: 16px;
+            padding: 1.2rem 0.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .quick-stat-item {
+            text-align: center;
+            flex: 1;
+        }
+
+        .stat-number {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: white;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            margin-bottom: 0.3rem;
+        }
+
+        .stat-label-small {
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-divider {
+            width: 1px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .motivation-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.6rem;
-            border: 3px solid rgba(255,255,255,0.3);
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-            transition: var(--transition);
-            cursor: pointer;
+            padding: 1rem 1.2rem;
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
         }
 
-        .user-avatar:hover {
-            transform: scale(1.05) rotate(5deg);
-            border-color: rgba(255,255,255,0.5);
+        .motivation-icon {
+            font-size: 1.5rem;
+            animation: pulse 2s ease-in-out infinite;
         }
 
-        .progress-bar {
-            width: 100%;
-            height: 8px;
-            background: rgba(255,255,255,0.3);
-            border-radius: 4px;
-            margin: 10px 0;
-            overflow: hidden;
-            position: relative;
-            z-index: 2;
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
         }
 
-        .progress-fill {
-            height: 100%;
-            background: white;
-            width: 70%;
-            border-radius: 4px;
-            transition: width 0.5s ease;
+        .motivation-text {
+            margin: 0;
+            color: white;
+            font-size: 0.9rem;
+            font-weight: 500;
+            flex: 1;
         }
 
         /* Stats Grid */
@@ -1122,16 +1234,22 @@
 <body>
     <!-- Header Móvil -->
     <header class="mobile-header">
-        <div class="header-top">
-            <div class="logo">
-                <h1>Mi Vida UPMH 🎓</h1>
+        <div class="header-content">
+            <div class="header-main">
+                <div class="logo-section">
+                    <div class="app-icon">📚</div>
+                    <div class="app-info">
+                        <h1 class="app-title">Mi Vida UPMH</h1>
+                        <p class="app-subtitle">Tu asistente académico</p>
+                    </div>
+                </div>
+                <div class="user-menu">
+                    <i class="fas fa-bell" id="notifications-btn" style="cursor: pointer;"></i>
+                    <i class="fas fa-cog" id="settings-btn" style="cursor: pointer;"></i>
+                </div>
             </div>
-            <div class="user-menu">
-                <i class="fas fa-bell" id="notifications-btn" style="cursor: pointer;"></i>
-                <i class="fas fa-cog" id="settings-btn" style="cursor: pointer;"></i>
-            </div>
+            <div class="date-display" id="current-date">Cargando fecha...</div>
         </div>
-        <div class="date-display" id="current-date">Cargando fecha...</div>
     </header>
 
     <!-- Notificación -->
@@ -1168,18 +1286,36 @@
         <!-- Sección de Inicio -->
         <div id="page-inicio" class="page-section">
         <!-- Tarjeta de Bienvenida -->
-        <div class="welcome-card">
-            <div class="welcome-header">
-                <div>
-                    <h2>¡Hola de nuevo! 👋</h2>
-                    <p id="welcome-message">Cargando...</p>
+        <div class="welcome-card-new">
+            <div class="welcome-bg-pattern"></div>
+            <div class="welcome-content">
+                <div class="welcome-greeting">
+                    <div class="greeting-emoji">👋</div>
+                    <h2 class="greeting-title">¡Hola de nuevo!</h2>
+                    <p class="greeting-subtitle" id="welcome-message">Cargando...</p>
                 </div>
-                <div class="user-avatar">
-                    <i class="fas fa-user"></i>
+                
+                <div class="quick-stats">
+                    <div class="quick-stat-item">
+                        <div class="stat-number" id="quick-tasks-stat">0</div>
+                        <div class="stat-label-small">Tareas Hoy</div>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="quick-stat-item">
+                        <div class="stat-number" id="quick-events-stat">0</div>
+                        <div class="stat-label-small">Eventos</div>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="quick-stat-item">
+                        <div class="stat-number" id="quick-progress-stat">0%</div>
+                        <div class="stat-label-small">Completado</div>
+                    </div>
                 </div>
-            </div>
-            <div class="progress-bar">
-                <div class="progress-fill" id="progress-fill"></div>
+
+                <div class="motivation-section">
+                    <div class="motivation-icon">✨</div>
+                    <p class="motivation-text" id="motivation-message">¡Sigue adelante con tus metas!</p>
+                </div>
             </div>
         </div>
 
@@ -2622,12 +2758,44 @@
         function updateWelcomeMessage() {
             const hour = new Date().getHours();
             let message = '';
+            let motivation = '';
 
-            if (hour < 12) message = '¡Buenos días! ☀️';
-            else if (hour < 18) message = '¡Buenas tardes! 🌤️';
-            else message = '¡Buenas noches! 🌙';
+            if (hour < 12) {
+                message = 'Buenos días, es un gran día para aprender';
+                motivation = '¡Comienza el día con energía! El éxito está en cada pequeño paso.';
+            } else if (hour < 18) {
+                message = 'Buenas tardes, sigue adelante con tus metas';
+                motivation = 'Estás a mitad del camino. ¡Mantén el ritmo y alcanza tus objetivos!';
+            } else {
+                message = 'Buenas noches, descansa y recarga energías';
+                motivation = 'Reflexiona sobre lo logrado hoy. Mañana será aún mejor.';
+            }
 
-            document.getElementById('welcome-message').textContent = message;
+            const welcomeEl = document.getElementById('welcome-message');
+            const motivationEl = document.getElementById('motivation-message');
+            
+            if (welcomeEl) welcomeEl.textContent = message;
+            if (motivationEl) motivationEl.textContent = motivation;
+
+            // Actualizar quick stats
+            updateQuickStats();
+        }
+
+        function updateQuickStats() {
+            const today = new Date().toISOString().split('T')[0];
+            const todayTasks = appData.tasks.filter(t => !t.completed && t.deadline === today).length;
+            const todayEvents = appData.events.filter(e => e.date === today).length;
+            const completedTasks = appData.tasks.filter(t => t.completed).length;
+            const totalTasks = appData.tasks.length;
+            const progressPercent = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+
+            const quickTasksEl = document.getElementById('quick-tasks-stat');
+            const quickEventsEl = document.getElementById('quick-events-stat');
+            const quickProgressEl = document.getElementById('quick-progress-stat');
+
+            if (quickTasksEl) quickTasksEl.textContent = todayTasks;
+            if (quickEventsEl) quickEventsEl.textContent = todayEvents;
+            if (quickProgressEl) quickProgressEl.textContent = progressPercent + '%';
         }
 
         function updateStats() {
