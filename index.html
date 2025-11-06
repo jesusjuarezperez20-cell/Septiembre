@@ -1758,14 +1758,16 @@
         // Event delegation global para todos los botones de eliminar
         function setupGlobalDeleteListeners() {
             document.body.addEventListener('click', function(e) {
-                const target = e.target;
-                
-                // Buscar el botón de eliminar más cercano
+                let target = e.target;
                 let deleteBtn = null;
-                if (target.classList.contains('delete-btn')) {
-                    deleteBtn = target;
-                } else if (target.closest('.delete-btn')) {
-                    deleteBtn = target.closest('.delete-btn');
+                
+                // Buscar el botón de eliminar subiendo en el DOM
+                while (target && target !== document.body) {
+                    if (target.classList && target.classList.contains('delete-btn')) {
+                        deleteBtn = target;
+                        break;
+                    }
+                    target = target.parentElement;
                 }
                 
                 if (!deleteBtn) return;
@@ -1776,10 +1778,10 @@
                 const id = parseInt(deleteBtn.getAttribute('data-id'));
                 const type = deleteBtn.getAttribute('data-type');
                 
-                console.log('Botón de eliminar clickeado:', type, id);
+                console.log('Eliminar clickeado - Tipo:', type, 'ID:', id);
                 
                 if (!id || !type) {
-                    console.log('ID o tipo no válido');
+                    console.log('ID o tipo inválido');
                     return;
                 }
                 
@@ -1808,12 +1810,12 @@
                 
                 console.log('Item encontrado:', item);
                 
-                if (item && name) {
+                if (item) {
                     openDeleteModal(type, id, name);
                 } else {
-                    console.log('No se encontró el item para eliminar');
+                    console.log('No se encontró el elemento');
                 }
-            }, true); // Usar capture phase
+            });
         }
 
         function initializeApp() {
@@ -2132,16 +2134,20 @@
             const message = document.getElementById('delete-message');
 
             let typeText = '';
-            switch(type) {
-                case 'task':
-                    typeText = 'tarea';
-                    break;
-                case 'event':
-                    typeText = 'evento';
-                    break;
-                case 'person':
-                    typeText = 'persona';
-                    break;
+            if (type === 'task') {
+                typeText = 'tarea';
+            } else if (type === 'event') {
+                typeText = 'evento';
+            } else if (type === 'person') {
+                typeText = 'persona';
+            } else if (type === 'emotion') {
+                typeText = 'emoción';
+            } else if (type === 'class') {
+                typeText = 'clase';
+            } else if (type === 'subject') {
+                typeText = 'materia';
+            } else {
+                typeText = 'elemento';
             }
 
             title.textContent = `Eliminar ${typeText} 🗑️`;
@@ -2159,37 +2165,56 @@
         function confirmDelete() {
             if (!itemToDelete || !deleteType) {
                 console.log('No hay elemento para eliminar');
+                closeDeleteModal();
                 return;
             }
 
-            console.log('Eliminando:', deleteType, itemToDelete);
+            console.log('Confirmando eliminación:', deleteType, itemToDelete);
+
+            let deleted = false;
 
             if (deleteType === 'task') {
+                const before = appData.tasks.length;
                 appData.tasks = appData.tasks.filter(task => task.id !== itemToDelete);
+                deleted = appData.tasks.length < before;
             } else if (deleteType === 'event') {
+                const before = appData.events.length;
                 appData.events = appData.events.filter(event => event.id !== itemToDelete);
+                deleted = appData.events.length < before;
             } else if (deleteType === 'person') {
                 const personToDelete = appData.people.find(p => p.id === itemToDelete);
                 if (personToDelete) {
+                    const before = appData.people.length;
                     appData.people = appData.people.filter(person => person.id !== itemToDelete);
                     appData.emotions = appData.emotions.filter(emotion => emotion.person !== personToDelete.name);
+                    deleted = appData.people.length < before;
                 }
             } else if (deleteType === 'emotion') {
+                const before = appData.emotions.length;
                 appData.emotions = appData.emotions.filter(emotion => emotion.id !== itemToDelete);
+                deleted = appData.emotions.length < before;
             } else if (deleteType === 'class') {
-                console.log('Clases antes:', appData.schedule.length);
+                const before = appData.schedule.length;
                 appData.schedule = appData.schedule.filter(cls => cls.id !== itemToDelete);
-                console.log('Clases después:', appData.schedule.length);
+                deleted = appData.schedule.length < before;
+                console.log('Clases: antes=' + before + ', después=' + appData.schedule.length);
             } else if (deleteType === 'subject') {
-                console.log('Materias antes:', appData.subjects.length);
+                const before = appData.subjects.length;
                 appData.subjects = appData.subjects.filter(subj => subj.id !== itemToDelete);
-                console.log('Materias después:', appData.subjects.length);
+                deleted = appData.subjects.length < before;
+                console.log('Materias: antes=' + before + ', después=' + appData.subjects.length);
             }
 
-            saveData();
-            renderAllData();
-            closeDeleteModal();
-            showNotification('Elemento eliminado correctamente 🗑️');
+            if (deleted) {
+                saveData();
+                renderAllData();
+                closeDeleteModal();
+                showNotification('Elemento eliminado correctamente 🗑️');
+            } else {
+                console.log('No se pudo eliminar el elemento');
+                closeDeleteModal();
+                showNotification('Error al eliminar el elemento', 'error');
+            }
         }
 
         function showAllItems(type) {
