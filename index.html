@@ -1617,15 +1617,59 @@
             </div>
 
             <div class="card">
-                <p style="margin-bottom: 1rem; color: #777;">Analiza tus relaciones y obtén recomendaciones personalizadas</p>
+                <p style="margin-bottom: 1rem; color: var(--text-secondary);">Analiza tus relaciones y obtén recomendaciones personalizadas</p>
                 <button class="btn btn-primary" id="analyze-btn-bienestar">Analizar Mis Relaciones 🧠</button>
                 <div id="analysis-result-bienestar"></div>
             </div>
 
-            <div class="section-title">
-                <h3>Historial de Emociones 📝</h3>
+            <div class="section-title" style="margin-top: 2rem;">
+                <h3>Mis Emociones Registradas 📝</h3>
+                <div style="display: flex; gap: 8px;">
+                    <button class="see-all" id="toggle-view-btn" style="padding: 10px 18px;">
+                        <i class="fas fa-th-list"></i> Por Persona
+                    </button>
+                </div>
             </div>
-            <div id="emotions-history-bienestar"></div>
+
+            <!-- Controles de Filtro y Búsqueda -->
+            <div class="card" style="margin-bottom: 1rem;">
+                <div style="display: flex; flex-direction: column; gap: 12px;">
+                    <div class="form-group" style="margin: 0;">
+                        <label style="font-size: 0.85rem; font-weight: 600; margin-bottom: 0.5rem; display: block;">
+                            🔍 Buscar en emociones
+                        </label>
+                        <input type="text" id="emotions-search" class="form-control" placeholder="Buscar por persona o descripción...">
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        <div class="form-group" style="margin: 0;">
+                            <label style="font-size: 0.85rem; font-weight: 600; margin-bottom: 0.5rem; display: block;">
+                                👤 Filtrar por persona
+                            </label>
+                            <select id="filter-person" class="form-control">
+                                <option value="">Todas las personas</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group" style="margin: 0;">
+                            <label style="font-size: 0.85rem; font-weight: 600; margin-bottom: 0.5rem; display: block;">
+                                📅 Ordenar por
+                            </label>
+                            <select id="sort-emotions" class="form-control">
+                                <option value="date-desc">Más recientes</option>
+                                <option value="date-asc">Más antiguos</option>
+                                <option value="person">Persona (A-Z)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Vista Cronológica -->
+            <div id="emotions-timeline-view"></div>
+
+            <!-- Vista Agrupada por Persona -->
+            <div id="emotions-grouped-view" style="display: none;"></div>
         </div>
         <!-- Fin Sección de Bienestar -->
     </main>
@@ -2869,6 +2913,7 @@
 
             if (pageName === 'bienestar') {
                 populatePersonSelectsBienestar();
+                setupEmotionsFilters();
                 renderEmotionsHistoryBienestar();
             }
 
@@ -3385,52 +3430,324 @@
         }
 
         // ========== FUNCIONES PARA BIENESTAR ==========
+        let currentView = 'timeline'; // 'timeline' o 'grouped'
+        let emotionsFilters = {
+            search: '',
+            person: '',
+            sort: 'date-desc'
+        };
+
         function populatePersonSelectsBienestar() {
             const select = document.getElementById('person-select-bienestar');
+            const filterSelect = document.getElementById('filter-person');
             if (!select) return;
             
             select.innerHTML = '<option value="">Selecciona una persona</option>';
+            if (filterSelect) {
+                filterSelect.innerHTML = '<option value="">Todas las personas</option>';
+            }
+            
             appData.people.forEach(person => {
-                const option = document.createElement('option');
-                option.value = person.name;
-                option.textContent = `${person.emoji} ${person.name}`;
-                select.appendChild(option);
+                const option1 = document.createElement('option');
+                option1.value = person.name;
+                option1.textContent = `${person.emoji} ${person.name}`;
+                select.appendChild(option1);
+                
+                if (filterSelect) {
+                    const option2 = document.createElement('option');
+                    option2.value = person.name;
+                    option2.textContent = `${person.emoji} ${person.name}`;
+                    filterSelect.appendChild(option2);
+                }
             });
         }
 
-        function renderEmotionsHistoryBienestar() {
-            const container = document.getElementById('emotions-history-bienestar');
+        function getFilteredAndSortedEmotions() {
+            let filtered = [...appData.emotions];
+            
+            // Filtrar por búsqueda
+            if (emotionsFilters.search) {
+                const search = emotionsFilters.search.toLowerCase();
+                filtered = filtered.filter(emotion => 
+                    emotion.person.toLowerCase().includes(search) ||
+                    emotion.description.toLowerCase().includes(search) ||
+                    emotion.emotions.some(e => e.toLowerCase().includes(search))
+                );
+            }
+            
+            // Filtrar por persona
+            if (emotionsFilters.person) {
+                filtered = filtered.filter(emotion => emotion.person === emotionsFilters.person);
+            }
+            
+            // Ordenar
+            if (emotionsFilters.sort === 'date-desc') {
+                filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
+            } else if (emotionsFilters.sort === 'date-asc') {
+                filtered.sort((a, b) => new Date(a.date) - new Date(b.date));
+            } else if (emotionsFilters.sort === 'person') {
+                filtered.sort((a, b) => a.person.localeCompare(b.person));
+            }
+            
+            return filtered;
+        }
+
+        function renderEmotionsTimelineView() {
+            const container = document.getElementById('emotions-timeline-view');
             if (!container) return;
             
-            if (appData.emotions.length === 0) {
+            const filteredEmotions = getFilteredAndSortedEmotions();
+            
+            if (filteredEmotions.length === 0) {
                 container.innerHTML = `
                     <div class="card">
                         <div class="empty-state">
                             <div class="empty-icon">💭</div>
-                            <p>No has registrado emociones aún</p>
+                            <p>${appData.emotions.length === 0 ? 'No has registrado emociones aún' : 'No se encontraron emociones con estos filtros'}</p>
                         </div>
                     </div>
                 `;
                 return;
             }
             
-            container.innerHTML = appData.emotions.map(emotion => `
-                <div class="card" style="margin-bottom: 1rem; position: relative;">
-                    <div class="card-actions">
-                        <button class="action-btn-small delete-btn" data-id="${emotion.id}" data-type="emotion">
-                            <i class="fas fa-trash"></i>
-                        </button>
+            container.innerHTML = filteredEmotions.map(emotion => {
+                const person = appData.people.find(p => p.name === emotion.person);
+                const emoji = person ? person.emoji : '👤';
+                
+                return `
+                    <div class="card" style="margin-bottom: 1rem; position: relative; transition: var(--transition);">
+                        <div class="card-actions">
+                            <button class="action-btn-small delete-btn" data-id="${emotion.id}" data-type="emotion">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 1rem;">
+                            <div style="font-size: 2rem;">${emoji}</div>
+                            <div style="flex: 1;">
+                                <div style="font-weight: 700; font-size: 1rem; color: var(--text-primary);">${emotion.person}</div>
+                                <div style="font-size: 0.8rem; color: var(--text-secondary);">
+                                    📅 ${formatDate(emotion.date)}
+                                </div>
+                            </div>
+                        </div>
+                        <div style="margin: 0.8rem 0; display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                            ${emotion.emotions.map(e => {
+                                const emotionEmojis = {
+                                    'Alegría': '😊',
+                                    'Tristeza': '😢',
+                                    'Enojo': '😠',
+                                    'Amor': '❤️',
+                                    'Frustración': '😤',
+                                    'Confianza': '🤝',
+                                    'Miedo': '😨',
+                                    'Sorpresa': '😲'
+                                };
+                                return `<span class="emotion-tag active" style="pointer-events: none;">
+                                    <span class="emoji">${emotionEmojis[e] || '💭'}</span> ${e}
+                                </span>`;
+                            }).join('')}
+                        </div>
+                        <p style="color: var(--text-secondary); font-size: 0.9rem; margin: 0; line-height: 1.5; padding: 0.8rem; background: var(--bg-primary); border-radius: 12px;">
+                            "${emotion.description}"
+                        </p>
                     </div>
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-                        <strong>${emotion.person}</strong>
-                        <span style="font-size: 0.8rem; color: #777;">${formatDate(emotion.date)}</span>
+                `;
+            }).join('');
+        }
+
+        function renderEmotionsGroupedView() {
+            const container = document.getElementById('emotions-grouped-view');
+            if (!container) return;
+            
+            const filteredEmotions = getFilteredAndSortedEmotions();
+            
+            if (filteredEmotions.length === 0) {
+                container.innerHTML = `
+                    <div class="card">
+                        <div class="empty-state">
+                            <div class="empty-icon">💭</div>
+                            <p>${appData.emotions.length === 0 ? 'No has registrado emociones aún' : 'No se encontraron emociones con estos filtros'}</p>
+                        </div>
                     </div>
-                    <div style="margin: 0.5rem 0;">
-                        ${emotion.emotions.map(e => `<span class="emotion-tag active" style="margin-right: 0.5rem;">${e}</span>`).join('')}
+                `;
+                return;
+            }
+            
+            // Agrupar por persona
+            const groupedByPerson = {};
+            filteredEmotions.forEach(emotion => {
+                if (!groupedByPerson[emotion.person]) {
+                    groupedByPerson[emotion.person] = [];
+                }
+                groupedByPerson[emotion.person].push(emotion);
+            });
+            
+            container.innerHTML = Object.keys(groupedByPerson).sort().map(personName => {
+                const emotions = groupedByPerson[personName];
+                const person = appData.people.find(p => p.name === personName);
+                const emoji = person ? person.emoji : '👤';
+                const relation = person ? person.relation : 'Desconocido';
+                
+                // Contar emociones totales
+                const emotionCounts = {};
+                emotions.forEach(emotion => {
+                    emotion.emotions.forEach(e => {
+                        emotionCounts[e] = (emotionCounts[e] || 0) + 1;
+                    });
+                });
+                
+                const topEmotions = Object.entries(emotionCounts)
+                    .sort((a, b) => b[1] - a[1])
+                    .slice(0, 3);
+                
+                return `
+                    <div class="card" style="margin-bottom: 1.5rem;">
+                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 2px solid var(--border-color);">
+                            <div style="font-size: 2.5rem;">${emoji}</div>
+                            <div style="flex: 1;">
+                                <div style="font-weight: 700; font-size: 1.2rem; color: var(--text-primary);">${personName}</div>
+                                <div style="font-size: 0.85rem; color: var(--text-secondary);">${relation}</div>
+                                <div style="font-size: 0.8rem; color: var(--primary-color); margin-top: 0.3rem;">
+                                    ${emotions.length} ${emotions.length === 1 ? 'registro' : 'registros'}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        ${topEmotions.length > 0 ? `
+                            <div style="margin-bottom: 1rem;">
+                                <div style="font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.5rem;">
+                                    Emociones más frecuentes:
+                                </div>
+                                <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                                    ${topEmotions.map(([emotion, count]) => {
+                                        const emotionEmojis = {
+                                            'Alegría': '😊',
+                                            'Tristeza': '😢',
+                                            'Enojo': '😠',
+                                            'Amor': '❤️',
+                                            'Frustración': '😤',
+                                            'Confianza': '🤝'
+                                        };
+                                        return `<span class="emotion-tag active" style="pointer-events: none;">
+                                            <span class="emoji">${emotionEmojis[emotion] || '💭'}</span> ${emotion} (${count})
+                                        </span>`;
+                                    }).join('')}
+                                </div>
+                            </div>
+                        ` : ''}
+                        
+                        <div style="margin-top: 1rem;">
+                            <button class="btn" style="width: 100%; background: var(--bg-primary); color: var(--text-primary); border: 1px solid var(--border-color); padding: 0.8rem;" 
+                                onclick="togglePersonEmotions('${personName}')">
+                                <i class="fas fa-chevron-down"></i> Ver todos los registros
+                            </button>
+                            <div id="person-emotions-${personName.replace(/\s+/g, '-')}" style="display: none; margin-top: 1rem;">
+                                ${emotions.map(emotion => `
+                                    <div style="padding: 1rem; margin-top: 0.8rem; background: var(--bg-primary); border-radius: 12px; border: 1px solid var(--border-color); position: relative;">
+                                        <div class="card-actions" style="top: 0.5rem; right: 0.5rem;">
+                                            <button class="action-btn-small delete-btn" data-id="${emotion.id}" data-type="emotion">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                        <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.5rem;">
+                                            📅 ${formatDate(emotion.date)}
+                                        </div>
+                                        <div style="margin: 0.5rem 0; display: flex; flex-wrap: wrap; gap: 0.4rem;">
+                                            ${emotion.emotions.map(e => {
+                                                const emotionEmojis = {
+                                                    'Alegría': '😊',
+                                                    'Tristeza': '😢',
+                                                    'Enojo': '😠',
+                                                    'Amor': '❤️',
+                                                    'Frustración': '😤',
+                                                    'Confianza': '🤝'
+                                                };
+                                                return `<span class="emotion-tag active" style="pointer-events: none; font-size: 0.75rem; padding: 0.4rem 0.6rem;">
+                                                    ${emotionEmojis[e] || '💭'} ${e}
+                                                </span>`;
+                                            }).join('')}
+                                        </div>
+                                        <p style="color: var(--text-secondary); font-size: 0.85rem; margin: 0.5rem 0 0 0; font-style: italic;">
+                                            "${emotion.description}"
+                                        </p>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
                     </div>
-                    <p style="color: #777; font-size: 0.9rem; margin-top: 0.5rem;">${emotion.description}</p>
-                </div>
-            `).join('');
+                `;
+            }).join('');
+        }
+
+        function togglePersonEmotions(personName) {
+            const containerId = 'person-emotions-' + personName.replace(/\s+/g, '-');
+            const container = document.getElementById(containerId);
+            const button = container.previousElementSibling;
+            
+            if (container.style.display === 'none') {
+                container.style.display = 'block';
+                button.innerHTML = '<i class="fas fa-chevron-up"></i> Ocultar registros';
+            } else {
+                container.style.display = 'none';
+                button.innerHTML = '<i class="fas fa-chevron-down"></i> Ver todos los registros';
+            }
+        }
+
+        function renderEmotionsHistoryBienestar() {
+            if (currentView === 'timeline') {
+                renderEmotionsTimelineView();
+            } else {
+                renderEmotionsGroupedView();
+            }
+        }
+
+        function setupEmotionsFilters() {
+            const searchInput = document.getElementById('emotions-search');
+            const filterPerson = document.getElementById('filter-person');
+            const sortSelect = document.getElementById('sort-emotions');
+            const toggleViewBtn = document.getElementById('toggle-view-btn');
+            
+            if (searchInput) {
+                searchInput.addEventListener('input', function() {
+                    emotionsFilters.search = this.value;
+                    renderEmotionsHistoryBienestar();
+                });
+            }
+            
+            if (filterPerson) {
+                filterPerson.addEventListener('change', function() {
+                    emotionsFilters.person = this.value;
+                    renderEmotionsHistoryBienestar();
+                });
+            }
+            
+            if (sortSelect) {
+                sortSelect.addEventListener('change', function() {
+                    emotionsFilters.sort = this.value;
+                    renderEmotionsHistoryBienestar();
+                });
+            }
+            
+            if (toggleViewBtn) {
+                toggleViewBtn.addEventListener('click', function() {
+                    const timelineView = document.getElementById('emotions-timeline-view');
+                    const groupedView = document.getElementById('emotions-grouped-view');
+                    
+                    if (currentView === 'timeline') {
+                        currentView = 'grouped';
+                        timelineView.style.display = 'none';
+                        groupedView.style.display = 'block';
+                        this.innerHTML = '<i class="fas fa-stream"></i> Cronológico';
+                        renderEmotionsGroupedView();
+                    } else {
+                        currentView = 'timeline';
+                        timelineView.style.display = 'block';
+                        groupedView.style.display = 'none';
+                        this.innerHTML = '<i class="fas fa-th-list"></i> Por Persona';
+                        renderEmotionsTimelineView();
+                    }
+                });
+            }
         }
 
         // ========== EVENT LISTENERS ADICIONALES ==========
@@ -3478,6 +3795,7 @@
 
                 appData.emotions.push(newEmotion);
                 saveData();
+                populatePersonSelectsBienestar();
                 renderEmotionsHistoryBienestar();
                 updateStats();
                 showNotification('¡Emoción registrada correctamente! ❤️');
