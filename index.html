@@ -1752,7 +1752,52 @@
             initializeApp();
             setupEventListeners();
             renderAllData();
+            setupGlobalDeleteListeners();
         });
+
+        // Event delegation global para todos los botones de eliminar
+        function setupGlobalDeleteListeners() {
+            document.body.addEventListener('click', function(e) {
+                const deleteBtn = e.target.closest('.delete-btn');
+                if (!deleteBtn) return;
+
+                const id = parseInt(deleteBtn.getAttribute('data-id'));
+                const type = deleteBtn.getAttribute('data-type');
+                
+                let item, name;
+                
+                switch(type) {
+                    case 'class':
+                        item = appData.schedule.find(c => c.id === id);
+                        name = item ? item.name : '';
+                        break;
+                    case 'subject':
+                        item = appData.subjects.find(s => s.id === id);
+                        name = item ? item.name : '';
+                        break;
+                    case 'task':
+                        item = appData.tasks.find(t => t.id === id);
+                        name = item ? item.title : '';
+                        break;
+                    case 'event':
+                        item = appData.events.find(ev => ev.id === id);
+                        name = item ? item.title : '';
+                        break;
+                    case 'person':
+                        item = appData.people.find(p => p.id === id);
+                        name = item ? item.name : '';
+                        break;
+                    case 'emotion':
+                        item = appData.emotions.find(em => em.id === id);
+                        name = item ? `Emoción sobre ${item.person}` : '';
+                        break;
+                }
+                
+                if (item && name) {
+                    openDeleteModal(type, id, name);
+                }
+            });
+        }
 
         function initializeApp() {
             // Cargar datos guardados
@@ -1889,18 +1934,6 @@
 
             updateScheduleStats();
         }
-        
-        // Event listener global para eliminar clases
-        document.addEventListener('click', function(e) {
-            const deleteBtn = e.target.closest('.delete-btn[data-type="class"]');
-            if (deleteBtn) {
-                const classId = parseInt(deleteBtn.getAttribute('data-id'));
-                const cls = appData.schedule.find(c => c.id === classId);
-                if (cls) {
-                    openDeleteModal('class', classId, cls.name);
-                }
-            }
-        });
 
         function renderSubjects() {
             const container = document.getElementById('subjects-container');
@@ -1958,18 +1991,6 @@
 
             updateProgressStats();
         }
-        
-        // Event listener global para eliminar materias
-        document.addEventListener('click', function(e) {
-            const deleteBtn = e.target.closest('.delete-btn[data-type="subject"]');
-            if (deleteBtn) {
-                const subjectId = parseInt(deleteBtn.getAttribute('data-id'));
-                const subject = appData.subjects.find(s => s.id === subjectId);
-                if (subject) {
-                    openDeleteModal('subject', subjectId, subject.name);
-                }
-            }
-        });
 
         function renderTasks() {
             const container = document.getElementById('tasks-scroll');
