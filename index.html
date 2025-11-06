@@ -1820,6 +1820,16 @@
                 e.preventDefault();
                 showAllItems('people');
             });
+
+            // Botones de agregar clase y materia (se agregan con delegación de eventos)
+            document.addEventListener('click', function(e) {
+                if (e.target && e.target.id === 'add-class-btn') {
+                    openClassModal();
+                }
+                if (e.target && e.target.id === 'add-subject-btn') {
+                    openSubjectModal();
+                }
+            });
         }
 
         // ========== RENDERIZADO ==========
@@ -1877,15 +1887,16 @@
 
             container.innerHTML = html;
 
-            // Event listeners para eliminar clases
-            container.querySelectorAll('.delete-btn[data-type="class"]').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const classId = parseInt(this.getAttribute('data-id'));
+            // Event listeners para eliminar clases con delegación de eventos
+            container.addEventListener('click', function(e) {
+                const deleteBtn = e.target.closest('.delete-btn[data-type="class"]');
+                if (deleteBtn) {
+                    const classId = parseInt(deleteBtn.getAttribute('data-id'));
                     const cls = appData.schedule.find(c => c.id === classId);
                     if (cls) {
                         openDeleteModal('class', classId, cls.name);
                     }
-                });
+                }
             });
 
             updateScheduleStats();
@@ -1945,15 +1956,16 @@
                 </div>
             `;
 
-            // Event listeners para eliminar materias
-            container.querySelectorAll('.delete-btn[data-type="subject"]').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const subjectId = parseInt(this.getAttribute('data-id'));
+            // Event listeners para eliminar materias con delegación de eventos
+            container.addEventListener('click', function(e) {
+                const deleteBtn = e.target.closest('.delete-btn[data-type="subject"]');
+                if (deleteBtn) {
+                    const subjectId = parseInt(deleteBtn.getAttribute('data-id'));
                     const subject = appData.subjects.find(s => s.id === subjectId);
                     if (subject) {
                         openDeleteModal('subject', subjectId, subject.name);
                     }
-                });
+                }
             });
 
             updateProgressStats();
@@ -2662,18 +2674,7 @@
             document.getElementById('subject-modal').style.display = 'flex';
         }
 
-        // Event listeners para botones de agregar clase y materia
-        document.addEventListener('DOMContentLoaded', function() {
-            const addClassBtn = document.getElementById('add-class-btn');
-            if (addClassBtn) {
-                addClassBtn.addEventListener('click', openClassModal);
-            }
-
-            const addSubjectBtn = document.getElementById('add-subject-btn');
-            if (addSubjectBtn) {
-                addSubjectBtn.addEventListener('click', openSubjectModal);
-            }
-        });
+        // Los event listeners se agregan en setupEventListeners()
 
         function updateScheduleStats() {
             const totalClasses = appData.schedule.length;
