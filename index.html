@@ -1326,6 +1326,7 @@
         <div id="page-horario" class="page-section" style="display: none;">
             <div class="section-title">
                 <h3>Mi Horario 📅</h3>
+                <button class="see-all" id="add-class-btn" style="padding: 10px 18px;">+ Agregar Clase</button>
             </div>
             
             <div class="stats-grid">
@@ -1343,89 +1344,24 @@
                         <div class="stat-label">Clases Semanales</div>
                     </div>
                 </div>
+                <div class="stat-item">
+                    <div class="stat-icon">⏰</div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="next-class-time">--:--</div>
+                        <div class="stat-label">Próxima Clase</div>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-icon">🎯</div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="week-progress">0%</div>
+                        <div class="stat-label">Progreso Semanal</div>
+                    </div>
+                </div>
             </div>
 
             <div style="margin-top: 1.5rem;">
-                <div id="schedule-container">
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="card-icon">📅</div>
-                            <h3>Lunes</h3>
-                        </div>
-                        <div class="event-item">
-                            <div class="event-time">08:00</div>
-                            <div class="event-text">Cálculo Diferencial - Aula 201</div>
-                        </div>
-                        <div class="event-item">
-                            <div class="event-time">10:00</div>
-                            <div class="event-text">Programación I - Lab 3</div>
-                        </div>
-                        <div class="event-item">
-                            <div class="event-time">14:00</div>
-                            <div class="event-text">Bases de Datos - Aula 305</div>
-                        </div>
-                    </div>
-
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="card-icon">📅</div>
-                            <h3>Martes</h3>
-                        </div>
-                        <div class="event-item">
-                            <div class="event-time">09:00</div>
-                            <div class="event-text">Ética Profesional - Aula 102</div>
-                        </div>
-                        <div class="event-item">
-                            <div class="event-time">11:00</div>
-                            <div class="event-text">Física - Aula 204</div>
-                        </div>
-                    </div>
-
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="card-icon">📅</div>
-                            <h3>Miércoles</h3>
-                        </div>
-                        <div class="event-item">
-                            <div class="event-time">08:00</div>
-                            <div class="event-text">Cálculo Diferencial - Aula 201</div>
-                        </div>
-                        <div class="event-item">
-                            <div class="event-time">10:00</div>
-                            <div class="event-text">Programación I - Lab 3</div>
-                        </div>
-                    </div>
-
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="card-icon">📅</div>
-                            <h3>Jueves</h3>
-                        </div>
-                        <div class="event-item">
-                            <div class="event-time">09:00</div>
-                            <div class="event-text">Ética Profesional - Aula 102</div>
-                        </div>
-                        <div class="event-item">
-                            <div class="event-time">14:00</div>
-                            <div class="event-text">Bases de Datos - Aula 305</div>
-                        </div>
-                    </div>
-
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="card-icon">📅</div>
-                            <h3>Viernes</h3>
-                        </div>
-                        <div class="event-item">
-                            <div class="event-time">10:00</div>
-                            <div class="event-text">Inglés - Aula 401</div>
-                        </div>
-                        <div class="event-item">
-                            <div class="event-time">12:00</div>
-                            <div class="event-text">Desarrollo Web - Lab 2</div>
-                        </div>
-                    </div>
-                </div>
+                <div id="schedule-container"></div>
             </div>
         </div>
         <!-- Fin Sección de Horario -->
@@ -1434,13 +1370,15 @@
         <div id="page-progreso" class="page-section" style="display: none;">
             <div class="section-title">
                 <h3>Mi Progreso Académico 📊</h3>
+                <button class="see-all" id="add-subject-btn" style="padding: 10px 18px;">+ Agregar Materia</button>
             </div>
 
-            <div class="card">
-                <h3 style="margin-bottom: 1rem;">Promedio General</h3>
-                <div style="text-align: center;">
-                    <div style="font-size: 3rem; font-weight: 700; background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 0.5rem;">8.7</div>
-                    <p style="color: #777;">Buen rendimiento académico</p>
+            <div class="card" style="background: var(--gradient); color: white; text-align: center; padding: 2rem;">
+                <h3 style="margin-bottom: 1rem; opacity: 0.95;">Promedio General</h3>
+                <div style="font-size: 4rem; font-weight: 700; margin-bottom: 0.5rem; text-shadow: 0 4px 12px rgba(0,0,0,0.2);" id="overall-average">0.0</div>
+                <p style="opacity: 0.9; font-size: 1.1rem;" id="performance-message">Cargando...</p>
+                <div class="progress-bar" style="margin-top: 1rem; background: rgba(255,255,255,0.3);">
+                    <div class="progress-fill" id="overall-progress" style="width: 0%; background: white;"></div>
                 </div>
             </div>
 
@@ -1448,67 +1386,7 @@
                 <h3>Materias 📚</h3>
             </div>
 
-            <div class="card">
-                <div style="margin-bottom: 1rem;">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
-                        <span style="font-weight: 600;">Cálculo Diferencial</span>
-                        <span style="font-weight: 700; color: var(--primary-color);">9.2</span>
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 92%; background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));"></div>
-                    </div>
-                </div>
-                
-                <div style="margin-bottom: 1rem;">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
-                        <span style="font-weight: 600;">Programación I</span>
-                        <span style="font-weight: 700; color: var(--primary-color);">9.5</span>
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 95%; background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));"></div>
-                    </div>
-                </div>
-
-                <div style="margin-bottom: 1rem;">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
-                        <span style="font-weight: 600;">Bases de Datos</span>
-                        <span style="font-weight: 700; color: var(--primary-color);">8.8</span>
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 88%; background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));"></div>
-                    </div>
-                </div>
-
-                <div style="margin-bottom: 1rem;">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
-                        <span style="font-weight: 600;">Ética Profesional</span>
-                        <span style="font-weight: 700; color: var(--primary-color);">8.5</span>
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 85%; background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));"></div>
-                    </div>
-                </div>
-
-                <div style="margin-bottom: 1rem;">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
-                        <span style="font-weight: 600;">Física</span>
-                        <span style="font-weight: 700; color: var(--primary-color);">7.9</span>
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 79%; background: linear-gradient(90deg, var(--warning-color), var(--danger-color));"></div>
-                    </div>
-                </div>
-
-                <div>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
-                        <span style="font-weight: 600;">Inglés</span>
-                        <span style="font-weight: 700; color: var(--primary-color);">8.4</span>
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 84%; background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));"></div>
-                    </div>
-                </div>
-            </div>
+            <div id="subjects-container"></div>
 
             <div class="section-title">
                 <h3>Estadísticas del Semestre 📈</h3>
@@ -1518,28 +1396,28 @@
                 <div class="stat-item">
                     <div class="stat-icon">✅</div>
                     <div class="stat-info">
-                        <div class="stat-value">24/28</div>
-                        <div class="stat-label">Tareas Entregadas</div>
+                        <div class="stat-value" id="completed-tasks-stat">0/0</div>
+                        <div class="stat-label">Tareas Completadas</div>
                     </div>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-icon">📝</div>
+                    <div class="stat-icon">📚</div>
                     <div class="stat-info">
-                        <div class="stat-value">92%</div>
-                        <div class="stat-label">Asistencia</div>
+                        <div class="stat-value" id="total-subjects-stat">0</div>
+                        <div class="stat-label">Materias Cursando</div>
                     </div>
                 </div>
                 <div class="stat-item">
                     <div class="stat-icon">🏆</div>
                     <div class="stat-info">
-                        <div class="stat-value">5</div>
+                        <div class="stat-value" id="approved-subjects">0</div>
                         <div class="stat-label">Materias Aprobadas</div>
                     </div>
                 </div>
                 <div class="stat-item">
                     <div class="stat-icon">⏰</div>
                     <div class="stat-info">
-                        <div class="stat-value">120h</div>
+                        <div class="stat-value" id="study-hours">0h</div>
                         <div class="stat-label">Horas de Estudio</div>
                     </div>
                 </div>
@@ -1722,6 +1600,68 @@
         </div>
     </div>
 
+    <!-- Modal para Agregar Clase -->
+    <div class="modal" id="class-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Agregar Clase 📚</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <form id="class-form">
+                <div class="form-group">
+                    <label for="class-name">Nombre de la Clase</label>
+                    <input type="text" id="class-name" class="form-control" placeholder="Ej: Cálculo Diferencial" required>
+                </div>
+                <div class="form-group">
+                    <label for="class-day">Día de la Semana</label>
+                    <select id="class-day" class="form-control" required>
+                        <option value="">Selecciona un día</option>
+                        <option value="Lunes">Lunes</option>
+                        <option value="Martes">Martes</option>
+                        <option value="Miércoles">Miércoles</option>
+                        <option value="Jueves">Jueves</option>
+                        <option value="Viernes">Viernes</option>
+                        <option value="Sábado">Sábado</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="class-time">Hora de Inicio</label>
+                    <input type="time" id="class-time" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="class-location">Ubicación</label>
+                    <input type="text" id="class-location" class="form-control" placeholder="Ej: Aula 201" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Agregar Clase ✅</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal para Agregar Materia -->
+    <div class="modal" id="subject-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Agregar Materia 📖</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <form id="subject-form">
+                <div class="form-group">
+                    <label for="subject-name">Nombre de la Materia</label>
+                    <input type="text" id="subject-name" class="form-control" placeholder="Ej: Programación Avanzada" required>
+                </div>
+                <div class="form-group">
+                    <label for="subject-grade">Calificación (0-10)</label>
+                    <input type="number" id="subject-grade" class="form-control" min="0" max="10" step="0.1" placeholder="8.5" required>
+                </div>
+                <div class="form-group">
+                    <label for="subject-credits">Créditos</label>
+                    <input type="number" id="subject-credits" class="form-control" min="1" max="12" placeholder="6" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Agregar Materia ✅</button>
+            </form>
+        </div>
+    </div>
+
     <!-- Modal de Confirmación de Eliminación -->
     <div class="modal" id="delete-modal">
         <div class="modal-content">
@@ -1759,6 +1699,27 @@
                 { id: 1, person: "Ana García", date: "2023-10-15", emotions: ["Alegría", "Confianza"], description: "Pasamos un buen rato estudiando juntas" },
                 { id: 2, person: "Carlos Mendoza", date: "2023-10-14", emotions: ["Amor", "Alegría"], description: "Cenamos juntos y hablamos de nuestro futuro" },
                 { id: 3, person: "Prof. Rodríguez", date: "2023-10-12", emotions: ["Frustración", "Enojo"], description: "No entendí bien la explicación en clase" }
+            ],
+            schedule: [
+                { id: 1, name: "Cálculo Diferencial", day: "Lunes", time: "08:00", location: "Aula 201" },
+                { id: 2, name: "Programación I", day: "Lunes", time: "10:00", location: "Lab 3" },
+                { id: 3, name: "Bases de Datos", day: "Lunes", time: "14:00", location: "Aula 305" },
+                { id: 4, name: "Ética Profesional", day: "Martes", time: "09:00", location: "Aula 102" },
+                { id: 5, name: "Física", day: "Martes", time: "11:00", location: "Aula 204" },
+                { id: 6, name: "Cálculo Diferencial", day: "Miércoles", time: "08:00", location: "Aula 201" },
+                { id: 7, name: "Programación I", day: "Miércoles", time: "10:00", location: "Lab 3" },
+                { id: 8, name: "Ética Profesional", day: "Jueves", time: "09:00", location: "Aula 102" },
+                { id: 9, name: "Bases de Datos", day: "Jueves", time: "14:00", location: "Aula 305" },
+                { id: 10, name: "Inglés", day: "Viernes", time: "10:00", location: "Aula 401" },
+                { id: 11, name: "Desarrollo Web", day: "Viernes", time: "12:00", location: "Lab 2" }
+            ],
+            subjects: [
+                { id: 1, name: "Cálculo Diferencial", grade: 9.2, credits: 8 },
+                { id: 2, name: "Programación I", grade: 9.5, credits: 6 },
+                { id: 3, name: "Bases de Datos", grade: 8.8, credits: 6 },
+                { id: 4, name: "Ética Profesional", grade: 8.5, credits: 4 },
+                { id: 5, name: "Física", grade: 7.9, credits: 8 },
+                { id: 6, name: "Inglés", grade: 8.4, credits: 4 }
             ]
         };
 
@@ -1821,6 +1782,8 @@
             document.getElementById('event-form').addEventListener('submit', handleEventSubmit);
             document.getElementById('emotion-form').addEventListener('submit', handleEmotionSubmit);
             document.getElementById('analyze-btn').addEventListener('click', analyzeRelationships);
+            document.getElementById('class-form').addEventListener('submit', handleClassSubmit);
+            document.getElementById('subject-form').addEventListener('submit', handleSubjectSubmit);
 
             // Eliminación
             document.getElementById('cancel-delete').addEventListener('click', closeDeleteModal);
@@ -1866,6 +1829,134 @@
             renderPeople();
             updateStats();
             populatePersonSelects();
+            renderSchedule();
+            renderSubjects();
+        }
+
+        function renderSchedule() {
+            const container = document.getElementById('schedule-container');
+            if (!container) return;
+
+            const days = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+            const dayEmojis = {
+                'Lunes': '📘',
+                'Martes': '📗',
+                'Miércoles': '📙',
+                'Jueves': '📕',
+                'Viernes': '📔',
+                'Sábado': '📓'
+            };
+
+            let html = '';
+            days.forEach(day => {
+                const dayClasses = appData.schedule.filter(c => c.day === day);
+                if (dayClasses.length > 0 || day === 'Lunes') {
+                    html += `
+                        <div class="card" style="margin-bottom: 1rem;">
+                            <div class="card-header">
+                                <div class="card-icon">${dayEmojis[day]}</div>
+                                <h3>${day}</h3>
+                            </div>
+                            ${dayClasses.length === 0 ? `
+                                <div class="empty-state" style="padding: 1rem;">
+                                    <p style="color: var(--text-secondary); margin: 0;">Sin clases programadas</p>
+                                </div>
+                            ` : dayClasses.sort((a, b) => a.time.localeCompare(b.time)).map(cls => `
+                                <div class="event-item">
+                                    <div class="event-time">${cls.time}</div>
+                                    <div class="event-text" style="flex: 1;">${cls.name} - ${cls.location}</div>
+                                    <button class="action-btn-small delete-btn" data-id="${cls.id}" data-type="class">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                }
+            });
+
+            container.innerHTML = html;
+
+            // Event listeners para eliminar clases
+            container.querySelectorAll('.delete-btn[data-type="class"]').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const classId = parseInt(this.getAttribute('data-id'));
+                    const cls = appData.schedule.find(c => c.id === classId);
+                    if (cls) {
+                        openDeleteModal('class', classId, cls.name);
+                    }
+                });
+            });
+
+            updateScheduleStats();
+        }
+
+        function renderSubjects() {
+            const container = document.getElementById('subjects-container');
+            if (!container) return;
+
+            if (appData.subjects.length === 0) {
+                container.innerHTML = `
+                    <div class="card">
+                        <div class="empty-state">
+                            <div class="empty-icon">📚</div>
+                            <p>No hay materias registradas</p>
+                        </div>
+                    </div>
+                `;
+                updateProgressStats();
+                return;
+            }
+
+            container.innerHTML = `
+                <div class="card">
+                    ${appData.subjects.map(subject => {
+                        const percentage = (subject.grade / 10) * 100;
+                        let gradientColor = 'linear-gradient(90deg, var(--primary-color), var(--secondary-color))';
+                        
+                        if (subject.grade < 6) {
+                            gradientColor = 'linear-gradient(90deg, var(--danger-color), var(--warning-color))';
+                        } else if (subject.grade < 8) {
+                            gradientColor = 'linear-gradient(90deg, var(--warning-color), var(--primary-color))';
+                        }
+
+                        return `
+                            <div style="margin-bottom: 1.2rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-color);">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                    <div style="flex: 1;">
+                                        <span style="font-weight: 600; font-size: 0.95rem;">${subject.name}</span>
+                                        <span style="font-size: 0.75rem; color: var(--text-secondary); margin-left: 8px;">
+                                            ${subject.credits} créditos
+                                        </span>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 8px;">
+                                        <span style="font-weight: 700; font-size: 1.1rem; color: var(--primary-color);">${subject.grade.toFixed(1)}</span>
+                                        <button class="action-btn-small delete-btn" data-id="${subject.id}" data-type="subject">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: ${percentage}%; background: ${gradientColor};"></div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+
+            // Event listeners para eliminar materias
+            container.querySelectorAll('.delete-btn[data-type="subject"]').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const subjectId = parseInt(this.getAttribute('data-id'));
+                    const subject = appData.subjects.find(s => s.id === subjectId);
+                    if (subject) {
+                        openDeleteModal('subject', subjectId, subject.name);
+                    }
+                });
+            });
+
+            updateProgressStats();
         }
 
         function renderTasks() {
@@ -2055,11 +2146,6 @@
             switch(deleteType) {
                 case 'task':
                     appData.tasks = appData.tasks.filter(task => task.id !== itemToDelete);
-                    // También eliminar emociones relacionadas con esta persona si es una persona
-                    const person = appData.people.find(p => p.id === itemToDelete);
-                    if (person) {
-                        appData.emotions = appData.emotions.filter(emotion => emotion.person !== person.name);
-                    }
                     break;
                 case 'event':
                     appData.events = appData.events.filter(event => event.id !== itemToDelete);
@@ -2068,9 +2154,14 @@
                     const personToDelete = appData.people.find(p => p.id === itemToDelete);
                     if (personToDelete) {
                         appData.people = appData.people.filter(person => person.id !== itemToDelete);
-                        // Eliminar emociones relacionadas con esta persona
                         appData.emotions = appData.emotions.filter(emotion => emotion.person !== personToDelete.name);
                     }
+                    break;
+                case 'class':
+                    appData.schedule = appData.schedule.filter(cls => cls.id !== itemToDelete);
+                    break;
+                case 'subject':
+                    appData.subjects = appData.subjects.filter(subj => subj.id !== itemToDelete);
                     break;
             }
 
@@ -2307,6 +2398,43 @@
             e.target.reset();
         }
 
+        function handleClassSubmit(e) {
+            e.preventDefault();
+
+            const newClass = {
+                id: Date.now(),
+                name: document.getElementById('class-name').value,
+                day: document.getElementById('class-day').value,
+                time: document.getElementById('class-time').value,
+                location: document.getElementById('class-location').value
+            };
+
+            appData.schedule.push(newClass);
+            saveData();
+            renderSchedule();
+            closeAllModals();
+            showNotification('¡Clase agregada correctamente! 📚');
+            e.target.reset();
+        }
+
+        function handleSubjectSubmit(e) {
+            e.preventDefault();
+
+            const newSubject = {
+                id: Date.now(),
+                name: document.getElementById('subject-name').value,
+                grade: parseFloat(document.getElementById('subject-grade').value),
+                credits: parseInt(document.getElementById('subject-credits').value)
+            };
+
+            appData.subjects.push(newSubject);
+            saveData();
+            renderSubjects();
+            closeAllModals();
+            showNotification('¡Materia agregada correctamente! 📖');
+            e.target.reset();
+        }
+
         function handleEmotionSubmit(e) {
             e.preventDefault();
 
@@ -2515,27 +2643,157 @@
             }
 
             if (pageName === 'horario') {
+                renderSchedule();
                 updateScheduleStats();
+            }
+
+            if (pageName === 'progreso') {
+                renderSubjects();
+                updateProgressStats();
             }
         }
 
+        function openClassModal() {
+            document.getElementById('class-modal').style.display = 'flex';
+            document.getElementById('class-time').value = '08:00';
+        }
+
+        function openSubjectModal() {
+            document.getElementById('subject-modal').style.display = 'flex';
+        }
+
+        // Event listeners para botones de agregar clase y materia
+        document.addEventListener('DOMContentLoaded', function() {
+            const addClassBtn = document.getElementById('add-class-btn');
+            if (addClassBtn) {
+                addClassBtn.addEventListener('click', openClassModal);
+            }
+
+            const addSubjectBtn = document.getElementById('add-subject-btn');
+            if (addSubjectBtn) {
+                addSubjectBtn.addEventListener('click', openSubjectModal);
+            }
+        });
+
         function updateScheduleStats() {
-            const totalClasses = 11;
-            document.getElementById('total-classes').textContent = totalClasses;
-            
-            const today = new Date().getDay();
-            let classesToday = 0;
-            
-            switch(today) {
-                case 1: classesToday = 3; break;
-                case 2: classesToday = 2; break;
-                case 3: classesToday = 2; break;
-                case 4: classesToday = 2; break;
-                case 5: classesToday = 2; break;
-                default: classesToday = 0;
+            const totalClasses = appData.schedule.length;
+            const totalClassesEl = document.getElementById('total-classes');
+            if (totalClassesEl) {
+                totalClassesEl.textContent = totalClasses;
             }
             
-            document.getElementById('classes-today').textContent = classesToday;
+            const daysMap = {
+                0: 'Domingo',
+                1: 'Lunes',
+                2: 'Martes',
+                3: 'Miércoles',
+                4: 'Jueves',
+                5: 'Viernes',
+                6: 'Sábado'
+            };
+            
+            const today = new Date().getDay();
+            const todayName = daysMap[today];
+            const classesToday = appData.schedule.filter(c => c.day === todayName).length;
+            
+            const classesTodayEl = document.getElementById('classes-today');
+            if (classesTodayEl) {
+                classesTodayEl.textContent = classesToday;
+            }
+
+            // Calcular próxima clase
+            const now = new Date();
+            const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+            const todayClasses = appData.schedule.filter(c => c.day === todayName && c.time > currentTime);
+            
+            const nextClassEl = document.getElementById('next-class-time');
+            if (nextClassEl) {
+                if (todayClasses.length > 0) {
+                    todayClasses.sort((a, b) => a.time.localeCompare(b.time));
+                    nextClassEl.textContent = todayClasses[0].time;
+                } else {
+                    nextClassEl.textContent = '--:--';
+                }
+            }
+
+            // Calcular progreso semanal
+            const totalWeekClasses = appData.schedule.length;
+            const completedClasses = appData.schedule.filter(c => {
+                const dayIndex = Object.keys(daysMap).find(key => daysMap[key] === c.day);
+                return dayIndex < today || (dayIndex == today && c.time < currentTime);
+            }).length;
+            
+            const weekProgressEl = document.getElementById('week-progress');
+            if (weekProgressEl) {
+                const percentage = totalWeekClasses > 0 ? Math.round((completedClasses / totalWeekClasses) * 100) : 0;
+                weekProgressEl.textContent = percentage + '%';
+            }
+        }
+
+        function updateProgressStats() {
+            // Calcular promedio general
+            let totalGrade = 0;
+            let totalCredits = 0;
+            
+            appData.subjects.forEach(subject => {
+                totalGrade += subject.grade * subject.credits;
+                totalCredits += subject.credits;
+            });
+            
+            const average = totalCredits > 0 ? (totalGrade / totalCredits) : 0;
+            
+            const averageEl = document.getElementById('overall-average');
+            const progressEl = document.getElementById('overall-progress');
+            const messageEl = document.getElementById('performance-message');
+            
+            if (averageEl) {
+                averageEl.textContent = average.toFixed(1);
+            }
+            
+            if (progressEl) {
+                progressEl.style.width = ((average / 10) * 100) + '%';
+            }
+            
+            if (messageEl) {
+                if (average >= 9) {
+                    messageEl.textContent = '¡Excelente rendimiento académico! 🌟';
+                } else if (average >= 8) {
+                    messageEl.textContent = 'Buen rendimiento académico 👍';
+                } else if (average >= 7) {
+                    messageEl.textContent = 'Rendimiento regular, ¡puedes mejorar! 💪';
+                } else if (average >= 6) {
+                    messageEl.textContent = 'Necesitas esforzarte más 📚';
+                } else {
+                    messageEl.textContent = 'Situación crítica, busca apoyo 🆘';
+                }
+            }
+
+            // Actualizar estadísticas del semestre
+            const completedTasks = appData.tasks.filter(t => t.completed).length;
+            const totalTasks = appData.tasks.length;
+            
+            const completedTasksEl = document.getElementById('completed-tasks-stat');
+            if (completedTasksEl) {
+                completedTasksEl.textContent = `${completedTasks}/${totalTasks}`;
+            }
+
+            const totalSubjectsEl = document.getElementById('total-subjects-stat');
+            if (totalSubjectsEl) {
+                totalSubjectsEl.textContent = appData.subjects.length;
+            }
+
+            const approvedSubjects = appData.subjects.filter(s => s.grade >= 6).length;
+            const approvedSubjectsEl = document.getElementById('approved-subjects');
+            if (approvedSubjectsEl) {
+                approvedSubjectsEl.textContent = approvedSubjects;
+            }
+
+            // Calcular horas de estudio (estimado: 2h por crédito por semana)
+            const studyHours = totalCredits * 2;
+            const studyHoursEl = document.getElementById('study-hours');
+            if (studyHoursEl) {
+                studyHoursEl.textContent = studyHours + 'h';
+            }
         }
 
         // ========== MODAL DE NOTIFICACIONES ==========
