@@ -1757,14 +1757,31 @@
 
         // Event delegation global para todos los botones de eliminar
         function setupGlobalDeleteListeners() {
-            document.addEventListener('click', function(e) {
-                if (!e.target.closest('.delete-btn')) return;
+            document.body.addEventListener('click', function(e) {
+                const target = e.target;
                 
-                const deleteBtn = e.target.closest('.delete-btn');
+                // Buscar el botón de eliminar más cercano
+                let deleteBtn = null;
+                if (target.classList.contains('delete-btn')) {
+                    deleteBtn = target;
+                } else if (target.closest('.delete-btn')) {
+                    deleteBtn = target.closest('.delete-btn');
+                }
+                
+                if (!deleteBtn) return;
+                
+                e.preventDefault();
+                e.stopPropagation();
+                
                 const id = parseInt(deleteBtn.getAttribute('data-id'));
                 const type = deleteBtn.getAttribute('data-type');
                 
-                if (!id || !type) return;
+                console.log('Botón de eliminar clickeado:', type, id);
+                
+                if (!id || !type) {
+                    console.log('ID o tipo no válido');
+                    return;
+                }
                 
                 let item = null;
                 let name = '';
@@ -1789,10 +1806,14 @@
                     name = item ? `Emoción sobre ${item.person}` : '';
                 }
                 
+                console.log('Item encontrado:', item);
+                
                 if (item && name) {
                     openDeleteModal(type, id, name);
+                } else {
+                    console.log('No se encontró el item para eliminar');
                 }
-            });
+            }, true); // Usar capture phase
         }
 
         function initializeApp() {
@@ -1927,7 +1948,6 @@
             });
 
             container.innerHTML = html;
-
             updateScheduleStats();
         }
 
@@ -2030,17 +2050,6 @@
                     toggleTaskCompletion(taskId);
                 });
             });
-
-            // Agregar event listeners a los botones de eliminar
-            document.querySelectorAll('.delete-btn[data-type="task"]').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const taskId = parseInt(this.getAttribute('data-id'));
-                    const task = appData.tasks.find(t => t.id === taskId);
-                    if (task) {
-                        openDeleteModal('task', taskId, task.title);
-                    }
-                });
-            });
         }
 
         function renderEvents() {
@@ -2078,17 +2087,6 @@
                     </div>
                 </div>
             `).join('');
-
-            // Agregar event listeners a los botones de eliminar
-            document.querySelectorAll('.delete-btn[data-type="event"]').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const eventId = parseInt(this.getAttribute('data-id'));
-                    const event = appData.events.find(e => e.id === eventId);
-                    if (event) {
-                        openDeleteModal('event', eventId, event.title);
-                    }
-                });
-            });
         }
 
         function renderPeople() {
@@ -2122,18 +2120,6 @@
                     </div>
                 </div>
             `).join('');
-
-            // Agregar event listeners con delegación de eventos
-            container.addEventListener('click', function(e) {
-                const deleteBtn = e.target.closest('.delete-btn[data-type="person"]');
-                if (deleteBtn) {
-                    const personId = parseInt(deleteBtn.getAttribute('data-id'));
-                    const person = appData.people.find(p => p.id === personId);
-                    if (person) {
-                        openDeleteModal('person', personId, person.name);
-                    }
-                }
-            });
         }
 
         // ========== FUNCIONALIDADES DE ELIMINACIÓN ==========
@@ -3059,18 +3045,6 @@
                     <p style="color: #777; font-size: 0.9rem; margin-top: 0.5rem;">${emotion.description}</p>
                 </div>
             `).join('');
-
-            // Event listeners para eliminar emociones con delegación de eventos
-            container.addEventListener('click', function(e) {
-                const deleteBtn = e.target.closest('.delete-btn[data-type="emotion"]');
-                if (deleteBtn) {
-                    const emotionId = parseInt(deleteBtn.getAttribute('data-id'));
-                    const emotion = appData.emotions.find(em => em.id === emotionId);
-                    if (emotion) {
-                        openDeleteModal('emotion', emotionId, `Emoción sobre ${emotion.person}`);
-                    }
-                }
-            });
         }
 
         // ========== EVENT LISTENERS ADICIONALES ==========
