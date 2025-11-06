@@ -1887,20 +1887,20 @@
 
             container.innerHTML = html;
 
-            // Event listeners para eliminar clases con delegación de eventos
-            container.addEventListener('click', function(e) {
-                const deleteBtn = e.target.closest('.delete-btn[data-type="class"]');
-                if (deleteBtn) {
-                    const classId = parseInt(deleteBtn.getAttribute('data-id'));
-                    const cls = appData.schedule.find(c => c.id === classId);
-                    if (cls) {
-                        openDeleteModal('class', classId, cls.name);
-                    }
-                }
-            });
-
             updateScheduleStats();
         }
+        
+        // Event listener global para eliminar clases
+        document.addEventListener('click', function(e) {
+            const deleteBtn = e.target.closest('.delete-btn[data-type="class"]');
+            if (deleteBtn) {
+                const classId = parseInt(deleteBtn.getAttribute('data-id'));
+                const cls = appData.schedule.find(c => c.id === classId);
+                if (cls) {
+                    openDeleteModal('class', classId, cls.name);
+                }
+            }
+        });
 
         function renderSubjects() {
             const container = document.getElementById('subjects-container');
@@ -1956,20 +1956,20 @@
                 </div>
             `;
 
-            // Event listeners para eliminar materias con delegación de eventos
-            container.addEventListener('click', function(e) {
-                const deleteBtn = e.target.closest('.delete-btn[data-type="subject"]');
-                if (deleteBtn) {
-                    const subjectId = parseInt(deleteBtn.getAttribute('data-id'));
-                    const subject = appData.subjects.find(s => s.id === subjectId);
-                    if (subject) {
-                        openDeleteModal('subject', subjectId, subject.name);
-                    }
-                }
-            });
-
             updateProgressStats();
         }
+        
+        // Event listener global para eliminar materias
+        document.addEventListener('click', function(e) {
+            const deleteBtn = e.target.closest('.delete-btn[data-type="subject"]');
+            if (deleteBtn) {
+                const subjectId = parseInt(deleteBtn.getAttribute('data-id'));
+                const subject = appData.subjects.find(s => s.id === subjectId);
+                if (subject) {
+                    openDeleteModal('subject', subjectId, subject.name);
+                }
+            }
+        });
 
         function renderTasks() {
             const container = document.getElementById('tasks-scroll');
