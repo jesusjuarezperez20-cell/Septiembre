@@ -2106,15 +2106,16 @@
                 </div>
             `).join('');
 
-            // Agregar event listeners a los botones de eliminar
-            document.querySelectorAll('.delete-btn[data-type="person"]').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const personId = parseInt(this.getAttribute('data-id'));
+            // Agregar event listeners con delegación de eventos
+            container.addEventListener('click', function(e) {
+                const deleteBtn = e.target.closest('.delete-btn[data-type="person"]');
+                if (deleteBtn) {
+                    const personId = parseInt(deleteBtn.getAttribute('data-id'));
                     const person = appData.people.find(p => p.id === personId);
                     if (person) {
                         openDeleteModal('person', personId, person.name);
                     }
-                });
+                }
             });
         }
 
@@ -2168,6 +2169,9 @@
                         appData.people = appData.people.filter(person => person.id !== itemToDelete);
                         appData.emotions = appData.emotions.filter(emotion => emotion.person !== personToDelete.name);
                     }
+                    break;
+                case 'emotion':
+                    appData.emotions = appData.emotions.filter(emotion => emotion.id !== itemToDelete);
                     break;
                 case 'class':
                     appData.schedule = appData.schedule.filter(cls => cls.id !== itemToDelete);
@@ -3020,7 +3024,12 @@
             }
             
             container.innerHTML = appData.emotions.map(emotion => `
-                <div class="card" style="margin-bottom: 1rem;">
+                <div class="card" style="margin-bottom: 1rem; position: relative;">
+                    <div class="card-actions">
+                        <button class="action-btn-small delete-btn" data-id="${emotion.id}" data-type="emotion">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
                         <strong>${emotion.person}</strong>
                         <span style="font-size: 0.8rem; color: #777;">${formatDate(emotion.date)}</span>
@@ -3031,6 +3040,18 @@
                     <p style="color: #777; font-size: 0.9rem; margin-top: 0.5rem;">${emotion.description}</p>
                 </div>
             `).join('');
+
+            // Event listeners para eliminar emociones con delegación de eventos
+            container.addEventListener('click', function(e) {
+                const deleteBtn = e.target.closest('.delete-btn[data-type="emotion"]');
+                if (deleteBtn) {
+                    const emotionId = parseInt(deleteBtn.getAttribute('data-id'));
+                    const emotion = appData.emotions.find(em => em.id === emotionId);
+                    if (emotion) {
+                        openDeleteModal('emotion', emotionId, `Emoción sobre ${emotion.person}`);
+                    }
+                }
+            });
         }
 
         // ========== EVENT LISTENERS ADICIONALES ==========
